@@ -1,0 +1,436 @@
+﻿@{
+    ViewData["Title"] = "All application";
+}
+@section Styles {
+    <style>
+        .kpi-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .kpi {
+            flex: 1;
+            min-width: 100px;
+        }
+    </style>
+}
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0">Dashboard</h1>
+                </div><!-- /.col -->
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item active">Dashboard</li>
+                    </ol>
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <!-- Small boxes (Stat box) -->
+            <div class="kpi-container">
+                <!-- ./col -->
+                <div class="kpi" style="cursor: pointer" onclick="getApplication(4)">
+                    <!-- small box -->
+                    <div class="small-box bg-danger">
+                        <div class="inner">
+                            <h3 id="reject"></h3>
+
+                            <p>Reject</p>
+                        </div>
+                        <div class="icon">
+                            <i class="ion ion-pie-graph"></i>
+                        </div>
+                        <a href="#" class="small-box-footer">
+                            &nbsp;
+                        </a>
+                    </div>
+                </div>
+                <div class="kpi" style="cursor: pointer" onclick="getApplication(1)">
+                    <!-- small box -->
+                    <div class="small-box bg-warning">
+                        <div class="inner">
+                            <h3 id="waiting"></h3>
+
+                            <p>Waiting</p>
+                        </div>
+                        <div class="icon">
+                            <i class="ion ion-person-add"></i>
+                        </div>
+                        <a href="#" class="small-box-footer">
+                            &nbsp;
+                        </a>
+                    </div>
+                </div>
+                <div class="kpi" style="cursor: pointer" onclick="getApplication(2)">
+                    <!-- small box -->
+                    <div class="small-box bg-primary">
+                        <div class="inner">
+                            <h3 id="research"></h3>
+
+                            <p>Research</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fas fa-cog"></i>
+                        </div>
+                        <a href="#" class="small-box-footer">
+                            &nbsp;
+                        </a>
+                    </div>
+                </div>
+                <div class="kpi" style="cursor: pointer" onclick="getApplication(3)">
+                    <!-- small box -->
+                    <div class="small-box bg-success">
+                        <div class="inner">
+                            <h3 id="success"></h3>
+
+                            <p>Approval</p>
+                        </div>
+                        <div class="icon">
+                            <i class="ion ion-stats-bars"></i>
+                        </div>
+                        <a href="#" class="small-box-footer">
+                            &nbsp;
+                        </a>
+                    </div>
+                </div>
+                <div class="kpi" style="cursor: pointer" onclick="getApplication(7)">
+                    <!-- small box -->
+                    <div class="small-box bg-secondary">
+                        <div class="inner">
+                            <h3 id="develop"></h3>
+
+                            <p>Develop</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <a class="small-box-footer">
+                            &nbsp;
+                        </a>
+                    </div>
+                </div>
+                <div class="kpi" style="cursor: pointer" onclick="getApplication(8)">
+                    <!-- small box -->
+                    <div class="small-box bg-dark">
+                        <div class="inner">
+                            <h3 id="uat"></h3>
+
+                            <p>UAT</p>
+                        </div>
+                        <div class="icon">
+                            <i class="ion ion-pie-graph"></i>
+                        </div>
+                        <a class="small-box-footer">
+                            &nbsp;
+                        </a>
+                    </div>
+                </div>
+                <div class="kpi" style="cursor: pointer" onclick="getApplication(9)">
+                    <!-- small box -->
+                    <div class="small-box bg-success">
+                        <div class="inner">
+                            <h3 id="resolved"></h3>
+
+                            <p>Resolved</p>
+                        </div>
+                        <div class="icon">
+                            <i class="ion ion-stats-bars"></i>
+                        </div>
+                        <a class="small-box-footer">
+                            &nbsp;
+                        </a>
+                    </div>
+                </div>
+                <div class="kpi" style="cursor: pointer" onclick="getApplication(5)">
+                    <!-- small box -->
+                    <div class="small-box bg-info">
+                        <div class="inner">
+                            <h3 id="publish"></h3>
+
+                            <p>Publish</p>
+                        </div>
+                        <div class="icon">
+                            <i class="ion ion-bag"></i>
+                        </div>
+                        <a class="small-box-footer">
+                            &nbsp;
+                        </a>
+                    </div>
+                </div>
+                <!-- ./col -->
+            </div>
+            <!-- /.row -->
+            <div class="row">
+                <div class="form-group row">
+                    <label for="filter" class="col-form-label">Filter Application</label>
+                    <div class="col-2">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">
+                                    <i class="far fa-calendar-alt"></i>
+                                </span>
+                            </div>
+                            <input type="text" class="form-control float-right" id="filter">
+
+                        </div>
+                    </div>
+                    <div class="col-2">
+                        <button class="btn btn-info" id="btnFilter" onclick="filterApplication()">Filter</button>
+                    </div>
+                    <div class="col-6"></div>
+                    <div class="col-2">
+                        <button style="float: right" class="btn btn-primary" id="btnExport" onclick="exportApplication()">Export</button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        @* <div class="card-header">
+                        <h3 class="card-title">DataTable with minimal features & hover style</h3>
+                        </div> *@
+                        <!-- /.card-header -->
+
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-8" style="font-size:25px" id="title-table"></div>
+                                <div class="col-4">
+                                    <input type="text" class="search" name="search" id="search" onkeyup="search()" placeholder="Search..." />
+                                </div>
+                            </div>
+                            <table id="dataTable" class="table table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Application No</th>
+                                        <th>Business Justification</th>
+                                        <th>User Require</th>
+                                        <th>System</th>
+                                        <th>Owner</th>
+                                        <th>Sign At</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tBody">
+                                </tbody>
+                            </table>
+                            <div class="pagination" id="pagination">
+                                @* <a href="#">&laquo;</a> *@
+
+                                @* <a href="#">&raquo;</a> *@
+                            </div>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+
+                    <div id="modal-all">
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+@section Scripts {
+    <script>
+        let _valueSign;
+        $(document).ready(function () {
+            countApplication()
+            $('#filter').daterangepicker({
+                startDate: moment().subtract(90, 'days'),
+                endDate: moment().add(1, 'days')
+            })
+            getApplication(0)
+            _valueSign = 0;
+        })
+
+        function countApplication() {
+            $.ajax({
+                url: '/Home/CountApplicationAll',
+                type: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + getCookie('esign_token')
+                },
+                data: {},
+                success: function (res) {
+                    let data = res.data
+                    $('#publish').html(data[0].publish)
+                    $('#success').html(data[0].success)
+                    $('#waiting').html(data[0].waiting)
+                    $('#reject').html(data[0].reject)
+                    $('#research').html(data[0].research)
+                    $('#develop').html(data[0].develop)
+                    $('#uat').html(data[0].uat)
+                    $('#resolved').html(data[0].resolved)
+                },
+                error: function (err) {
+                    if (err.status == 401) {
+                        logout();
+                    }
+                    else {
+                        alert('An error occurred. ' + err.responseText);
+                    }
+                }
+            });
+        }
+
+        let dataApplication;
+
+        //Get all application
+        function getApplication(valueSign) {
+            _valueSign = valueSign
+            $.ajax({
+                url: '/Application/GetApplicationByValueSign',
+                type: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + getCookie('esign_token')
+                },
+                data: { 
+                    valueSign: valueSign,
+                    timeSpan: $('#filter').val()
+                },
+                success: function (res) {
+                    dataApplication = res.data
+                    setupPagination(dataApplication, 1, 0);
+                    if(valueSign == 0) $('#title-table').html('Application: All')
+                    if(valueSign == 1) $('#title-table').html('Application: Waiting')
+                    if(valueSign == 2) $('#title-table').html('Application: Research')
+                    if(valueSign == 3) $('#title-table').html('Application: Approval')
+                    if(valueSign == 4) $('#title-table').html('Application: Reject')
+                    if(valueSign == 5) $('#title-table').html('Application: Publish')
+                    if(valueSign == 7) $('#title-table').html('Application: Develop')
+                    if(valueSign == 8) $('#title-table').html('Application: UAT')
+                    if(valueSign == 9) $('#title-table').html('Application: Resolved')
+                },
+                error: function (err) {
+                    if (err.status == 401) {
+                    logout();
+                    }
+                    else {
+                        alert('An error occurred. ' + err.responseText);
+                    }
+                }
+            });
+        }
+
+        //Get application by id card
+        // function getApplication(valueSign) {
+        //     $.ajax({
+        //         url: '/Application/GetApplicationByIdCard',
+        //         type: 'GET',
+        //         headers: {
+        //             'Authorization': 'Bearer ' + getCookie('esign_token')
+        //         },
+        //         data: { idCard: localStorage.getItem('user_id') },
+        //         success: function (res) {
+        //             dataApplication = res.data
+        //             setupPagination(dataApplication, 0, 0);
+        //             if (valueSign == 0) $('#title-table').html('Application: All')
+        //             if (valueSign == 1) $('#title-table').html('Application: Waiting')
+        //             if (valueSign == 2) $('#title-table').html('Application: Research')
+        //             if (valueSign == 3) $('#title-table').html('Application: Approval')
+        //             if (valueSign == 4) $('#title-table').html('Application: Reject')
+        //             if (valueSign == 5) $('#title-table').html('Application: Publish')
+        //             if (valueSign == 7) $('#title-table').html('Application: Develop')
+
+        //         },
+        //         error: function (err) {
+        //             if (err.status == 401) {
+        //                 logout();
+        //             }
+        //             else {
+        //                 alert('An error occurred. ' + err.responseText);
+        //             }
+        //         }
+        //     });
+        // }
+
+        function filterApplication() {
+            $.ajax({
+                url: '/Application/GetApplicationByValueSign',
+                type: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + getCookie('esign_token')
+                },
+                data: {
+                    valueSign: _valueSign,
+                    timeSpan: $('#filter').val()
+                },
+                success: function (res) {
+                    dataApplication = res.data
+                    setupPagination(dataApplication, 1, 0);
+                    if (_valueSign == 0) $('#title-table').html('Application: All')
+                    if (_valueSign == 1) $('#title-table').html('Application: Waiting')
+                    if (_valueSign == 2) $('#title-table').html('Application: Research')
+                    if (_valueSign == 3) $('#title-table').html('Application: Approval')
+                    if (_valueSign == 4) $('#title-table').html('Application: Reject')
+                    if (_valueSign == 5) $('#title-table').html('Application: Publish')
+                    if (_valueSign == 7) $('#title-table').html('Application: Develop')
+                    if (_valueSign == 8) $('#title-table').html('Application: UAT')
+                    if (_valueSign == 9) $('#title-table').html('Application: Resolved')
+                },
+                error: function (err) {
+                    if (err.status == 401) {
+                        logout();
+                    }
+                    else {
+                        alert('An error occurred. ' + err.responseText);
+                    }
+                }
+            });
+        }
+
+        function exportApplication() {
+            $.ajax({
+                url: '/Admin/Export',
+                type: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + getCookie('esign_token')
+                },
+                data: {
+                    valueSign: _valueSign,
+                    timeSpan: $('#filter').val()
+                },
+                success: function (res) {
+                    let base64Data = res.data;
+
+                    // Tạo link download
+                    let downloadLink = document.createElement("a");
+                    downloadLink.href = "data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64," + base64Data;
+                    downloadLink.download = "Application.xlsx"; // Đặt tên file tải xuống
+
+                    // Click link để download
+                    downloadLink.click();
+                },
+                error: function (err) {
+                    if (err.status == 401) {
+                        logout();
+                    }
+                    else {
+                        alert('An error occurred. ' + err.responseText);
+                    }
+                }
+            });
+        }
+
+        function search() {
+            let search = document.getElementById("search");
+            let filteredData = dataApplication.filter(item => item.application_no.includes(search.value));
+            setupPagination(filteredData, 0, 0)
+        }
+
+    </script>
+}

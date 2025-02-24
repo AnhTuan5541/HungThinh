@@ -1,0 +1,131 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutAuth.cshtml";
+}
+
+@section Styles {
+    <style>
+        .transparent-card {
+            background-color: rgba(0, 0, 0, 0.7); 
+            border-radius: 10px; /* Bo góc cho đẹp */
+            padding: 20px !important; /* Khoảng cách bên trong */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Đổ bóng nhẹ */
+        }
+    </style>
+}
+
+<section class="ftco-section" id="content">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 text-center mb-5">
+                @* <h2 class="heading-section">Tooling Management</h2> *@
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-4">
+                <div class="login-wrap p-0 transparent-card">
+                    <h3 class="mb-4 text-center">Administrator</h3>
+                    <div action="#" class="signin-form">
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="Username" required="" id="username" onkeydown="handleEnter(event)">
+                        </div>
+                        <div class="form-group">
+                            <input type="password" class="form-control" placeholder="Password" required="" id="password" onkeydown="handleEnter(event)">
+                            <span toggle="#password" class="fa fa-fw fa-eye field-icon toggle-password"></span>
+                        </div>
+                        @* <div class="form-group">
+                            <label>Select Site</label>
+                            <select class="form-control" id="site">
+                                <option style="color:black">ATV</option>
+                                <option style="color:black">ATI</option>
+                                <option style="color:black">ATK</option>
+                                <option style="color:black">ATJ</option>
+                                <option style="color:black">ATC</option>
+                                <option style="color:black">ATM</option>
+                                <option style="color:black">ATP</option>
+                                <option style="color:black">ATT</option>
+                                <option style="color:black">ATT</option>
+                                <option style="color:black">ATEP</option>
+                            </select>
+                        </div> *@
+                        @* <div class="form-group">
+                            <div class="custom-control custom-switch">
+                                <input type="checkbox" class="custom-control-input" id="localAccount">
+                                <label class="custom-control-label" for="localAccount">Login via local account</label>
+                            </div>
+                        </div> *@
+                        <div class="form-group">
+                            <button type="submit" class="form-control btn btn-primary submit px-3" onclick="login()">Sign In</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+
+        })
+
+        function handleEnter(event) {
+            if (event.key === 'Enter') {
+                login();
+            }
+        }
+
+        function login() {
+            let username = document.getElementById('username').value;
+            let password = document.getElementById('password').value;
+            if (!username) {
+                alert("Tài khoản không được để trống!")
+                return;
+            }
+            if (!password) {
+                alert("Mật khẩu không được để trống!")
+                return;
+            }
+
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('content').classList.add('opacity-content')
+            let data = {
+                "username": username,
+                "password": password,
+            }
+
+            $.ajax({
+                url: '/Auth/GetUserInfo', 
+                type: 'POST',
+                data: data,
+                success: function (res) {
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('content').classList.remove('opacity-content')
+                    if (res.statusCode == 'FAIL') {
+                        alert(res.message)
+                        return;
+                    }
+                    localStorage.setItem('fullname', res.data[0].fullname);
+                    localStorage.setItem('email', res.data[0].email);
+                    localStorage.setItem('user_id', res.data[0].username);
+                    localStorage.setItem('role', JSON.stringify(res.data[0].role));
+
+                    document.cookie = "esign_token=" + res.data[0].token + "; path=/; expires=" + new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000).toUTCString();
+
+                    if (localStorage.getItem('esign_url_last') !== null) {
+                        window.location.replace(localStorage.getItem('esign_url_last'))
+                    } else {
+                        window.location.replace("/admin/all-application")
+                    }
+                },
+                error: function (err) {
+                    alert('An error occurred. ' + err.responseText);
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('content').classList.remove('opacity-content')
+                }
+            });
+
+        }
+    </script>
+}

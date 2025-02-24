@@ -1,0 +1,206 @@
+﻿@{
+    ViewData["Title"] = "Profile";
+}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0">Profile</h1>
+                </div><!-- /.col -->
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item active">Profile</li>
+                    </ol>
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-3">
+
+                    <!-- Profile Image -->
+                    <div class="card card-primary card-outline">
+                        <div class="card-body box-profile">
+                            <div class="text-center">
+                                <img class="profile-user-img img-fluid img-circle" src="~/images/avatar.jpg" alt="User profile picture">
+                            </div>
+
+                            <h3 class="profile-username text-center" id="fullnameMain"></h3>
+
+                            <p class="text-muted text-center" id="roleMain"></p>
+                            <ul class="list-group list-group-unbordered mb-3">
+                                <li class="list-group-item">
+                                    <b>Username</b> <a class="float-right" id="usernameLeft"></a>
+                                </li>
+                                <li class="list-group-item">
+                                    <b>Email</b> <a class="float-right" id="emailLeft"></a>
+                                </li>
+                                <li class="list-group-item">
+                                    <b>Full Name</b> <a class="float-right" id="fullnameLeft"></a>
+                                </li>
+                            </ul>
+
+                            
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- /.card -->
+                </div>
+                <!-- /.col -->
+                <div class="col-md-9">
+                    <div class="card card-warning">
+                        <div class="card-header">
+                            <h3 class="card-title">Update Profile</h3>
+                        </div>
+                        <!-- /.card-header -->
+                        <!-- form start -->
+                        <div>
+                            <div class="card-body">
+                                <div class="form-group" id="divUsername">
+                                    <label for="username">Username</label>
+                                    <input type="text" class="form-control" id="username" placeholder="Username" disabled="">
+                                </div>
+                                <div class="form-group" id="">
+                                    <label for="email">Email</label>
+                                    <input type="text" class="form-control" id="email" placeholder="Email" disabled="">
+                                </div>
+                                <div class="form-group" id="">
+                                    <label for="fullname">Full Name</label>
+                                    <input type="text" class="form-control" id="fullname" placeholder="Fullname" disabled="">
+                                </div>
+                                <div class="form-group" id="">
+                                    <label for="password">Password mới</label>
+                                    <input type="password" class="form-control" id="password" placeholder="Password" disabled="">
+                                </div>
+                                <div class="form-group" id="">
+                                    <label for="password">Nhập lại password</label>
+                                    <input type="password" class="form-control" id="password_again" placeholder="Nhập lại password" disabled="">
+                                </div>
+                            </div>
+                            <!-- /.card-body -->
+
+                            <div class="card-footer">
+                                <button class="btn btn-warning" onclick="update()" id="updateBtn">Update</button>
+                                <button class="btn btn-primary" onclick="submit()" id="submitBtn" style="display:none">Submit</button>
+                                <button class="btn btn-secondary" onclick="cancel()" id="cancelBtn" style="display:none">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.col -->
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+@section Scripts {
+    <script>
+        $(function () {
+            let role = JSON.parse(localStorage.getItem('role'));
+            $('#fullnameMain').html(localStorage.getItem('fullname'));
+            $('#roleMain').html(role[0].role_name);
+
+            $('#username').val(localStorage.getItem('user_id'));
+            $('#email').val(localStorage.getItem('email'));
+            $('#fullname').val(localStorage.getItem('fullname'));
+
+            $('#usernameLeft').html(localStorage.getItem('user_id'));
+            $('#emailLeft').html(localStorage.getItem('email'));
+            $('#fullnameLeft').html(localStorage.getItem('fullname'));
+        });
+        function update(){
+            document.getElementById('updateBtn').style.display = 'none';
+            document.getElementById('submitBtn').style.display = 'inline-block';
+            document.getElementById('cancelBtn').style.display = 'inline-block';
+
+            document.getElementById('email').disabled = false;
+            document.getElementById('fullname').disabled = false;
+            document.getElementById('password').disabled = false;
+            document.getElementById('password_again').disabled = false;
+        }
+        function cancel(){
+            document.getElementById('updateBtn').style.display = 'inline-block';
+            document.getElementById('submitBtn').style.display = 'none';
+            document.getElementById('cancelBtn').style.display = 'none';
+
+            document.getElementById('email').disabled = true;
+            document.getElementById('fullname').disabled = true;
+            document.getElementById('password').disabled = true;
+            document.getElementById('password_again').disabled = true;
+        }
+
+        function submit() {
+            if($('#password').val()){
+                if($('#password').val() !== $('#password_again').val()){
+                    alert('Mật khẩu và nhập lại mật khẩu phải giống nhau!')
+                    return;
+                }
+                else{
+                    $.ajax({
+                    url: '/Admin/UpdateUserInfoWithPwd',
+                    type: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + getCookie('esign_token')
+                    },
+                    data: {
+                        username: $('#username').val(),
+                        email: $('#email').val(),
+                        fullname: $('#fullname').val(),
+                        password: $('#password').val(),
+                    },
+                    success: function (res) {
+                        alert(res.message)
+                        window.location.reload()
+                    },
+                    error: function (err) {
+                        if (err.status == 401) {
+                            logout();
+                        }
+                        else {
+                            alert('An error occurred. ' + err.responseText);
+                        }
+                    }
+                });
+                }
+            }
+            else{
+                $.ajax({
+                    url: '/Admin/UpdateUserInfo',
+                    type: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + getCookie('esign_token')
+                    },
+                    data: {
+                        username: $('#username').val(),
+                        email: $('#email').val(),
+                        fullname: $('#fullname').val(),
+
+                    },
+                    success: function (res) {
+                        alert(res.message)
+                        window.location.reload()
+
+                    },
+                    error: function (err) {
+                        if (err.status == 401) {
+                            logout();
+                        }
+                        else {
+                            alert('An error occurred. ' + err.responseText);
+                        }
+                    }
+                });
+            }
+        }
+    </script>
+}

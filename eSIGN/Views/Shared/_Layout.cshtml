@@ -113,7 +113,7 @@
                         </li>
                         <li class="nav-header">User</li>
                         <li class="nav-item">
-                            <a href="/admin/profile" class="nav-link" id="nav-link-profile">
+                            <a href="/profile" class="nav-link" id="nav-link-profile">
                                 <i class="nav-icon fas fa-users"></i>
                                 <p>
                                     Profile
@@ -122,10 +122,18 @@
                         </li>
                         <li class="nav-header">Admin</li>
                         <li class="nav-item">
-                            <a href="/admin/user" class="nav-link" id="nav-link-admin-user">
+                            <a href="/admin" class="nav-link" id="nav-link-admin">
                                 <i class="nav-icon far fa-calendar-alt"></i>
                                 <p>
                                     Quản lý user
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/admin/role" class="nav-link" id="nav-link-admin-role">
+                                <i class="nav-icon far fa-calendar-alt"></i>
+                                <p>
+                                    Quản lý phân quyền
                                 </p>
                             </a>
                         </li>
@@ -220,7 +228,6 @@
     <!-- AdminLTE App -->
     <script src="~/lib/dist/js/adminlte.js"></script>
     <script>
-        let _userID, _email, _fullname, _role
 
         $(function () {
             getUserInfo()
@@ -228,28 +235,33 @@
             checkCookie()
             let currentUrl = window.location.pathname;
             
-            if (currentUrl === '/') $('#nav-link-home').addClass('active');
-            if (currentUrl === '/home/application') $('#nav-link-home').addClass('active');
-
-            let urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.has('sign')) {
-                if (currentUrl === '/application/detail' && urlParams.get('sign') == 1) $('#nav-link-user-sign').addClass('active');
-                if (currentUrl === '/application/detail' && urlParams.get('sign') == 0) $('#nav-link-user-history').addClass('active');
-                if (currentUrl === '/admin/detail' && urlParams.get('sign') == 1) $('#nav-link-admin-application').addClass('active');
-                if (currentUrl === '/admin/detail' && urlParams.get('sign') == 0) $('#nav-link-admin-history').addClass('active');
+            switch(currentUrl){
+                case "/profile": 
+                    $('#nav-link-profile').addClass('active');
+                    break;
+                case "/admin":
+                    $('#nav-link-admin').addClass('active');
+                    break;
+                case "/admin/role":
+                    $('#nav-link-admin-role').addClass('active');
+                    break;
+                default:
+                    break;
             }
+           
 
-            let roleList = JSON.parse(localStorage.getItem("role"));
-            if (roleList.some(role => role.id_role === 2)) {
-                @* document.getElementById('nav-link-home').style.display = 'block';
-                document.getElementById('nav-link-new-application').style.display = 'block';
-                document.getElementById('nav-link-user-sign').style.display = 'block';
-                document.getElementById('nav-link-user-sign-history').style.display = 'block';
-                document.getElementById('nav-link-user-history').style.display = 'block'; *@
-                document.getElementById('nav-link-admin-application').style.display = 'block';
-                document.getElementById('nav-link-admin-history').style.display = 'block';
-                document.getElementById('nav-link-admin-all-application').style.display = 'block';
-            }
+
+            // let roleList = JSON.parse(localStorage.getItem("role"));
+            // if (roleList.some(role => role.id_role === 2)) {
+            //     document.getElementById('nav-link-home').style.display = 'block';
+            //     document.getElementById('nav-link-new-application').style.display = 'block';
+            //     document.getElementById('nav-link-user-sign').style.display = 'block';
+            //     document.getElementById('nav-link-user-sign-history').style.display = 'block';
+            //     document.getElementById('nav-link-user-history').style.display = 'block';
+            //     document.getElementById('nav-link-admin-application').style.display = 'block';
+            //     document.getElementById('nav-link-admin-history').style.display = 'block';
+            //     document.getElementById('nav-link-admin-all-application').style.display = 'block';
+            // }
         })
         function logout() {
             window.location.replace('/auth')
@@ -274,12 +286,9 @@
                     localStorage.setItem('fullname', res.data[0].fullname);
                     localStorage.setItem('email', res.data[0].email);
                     localStorage.setItem('user_id', res.data[0].username);
-                    localStorage.setItem('role', JSON.stringify(res.data[0].role));
+                    localStorage.setItem('id_role', res.data[0].id_role);
+                    localStorage.setItem('role', res.data[0].role);
 
-                    _userID = res.data[0].username
-                    _email = res.data[0].email
-                    _fullname = res.data[0].fullname
-                    _role = res.data[0].role
                 },
                 error: function (err) {
                     if (err.status == 401) {

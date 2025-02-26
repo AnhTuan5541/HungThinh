@@ -32,8 +32,9 @@
                         </div> *@
                         <!-- /.card-header -->
                         <div class="card-body">
-                            <div class="search">
-                                <input type="text" name="search" id="search" onkeyup="search()" placeholder="Search..." />
+                            <div>
+                                <button class="btn btn-success" data-toggle="modal" data-target="#modal-add" id="updateBtn" style="float:left">Add user</button>
+                                <input type="text" class="search" name="search" id="search" onkeyup="search()" placeholder="Search..." />
                             </div>
                             <table id="dataTable" class="table table-bordered table-hover">
                                 <thead>
@@ -43,6 +44,7 @@
                                         <th>Full Name</th>
                                         <th>Ngày tạo</th>
                                         <th>Ngày sửa</th>
+                                        <th>Quyền hạn</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -58,6 +60,46 @@
                         <!-- /.card-body -->
                         <div id="modal-all">
                         </div>
+                        <div class="modal fade" id="modal-add">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Add user</b></h4>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+
+                                        <div class="form-group">
+                                            <label for="username_new"><span style="color: red">*</span> Username</label>
+                                            <input type="text" class="form-control" id="username_new" value="" placeholder="Username">
+                                        </div>
+                                        <div class="form-group" id="">
+                                            <label for="email_new">Email</label>
+                                            <input type="text" class="form-control" id="email_new" value="" placeholder="Email">
+                                        </div>
+                                        <div class="form-group" id="">
+                                            <label for="fullname_new">Full Name</label>
+                                            <input type="text" class="form-control" id="fullname_new" value="" placeholder="Full name">
+                                        </div>
+                                        <div class="form-group" id="">
+                                            <label for="password_new"><span style="color: red">*</span> Password mới</label>
+                                            <input type="text" class="form-control" id="password_new" placeholder="Password">
+                                        </div>
+                                        <div class="form-group" id="">
+                                            <label for="password_again_new"><span style="color: red">*</span> Nhập lại password</label>
+                                            <input type="text" class="form-control" id="password_again_new" placeholder="Nhập lại password">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="role_new"><span style="color: red">*</span> Phân quyền</label>
+                                            <select class="form-control select2bs4" style="width: 100%;" id="role_new">
+                                            </select>
+                                        </div>
+                                        <button class="btn btn-success" onclick="addUser()" id="addBtn">Add</button>
+                                    </div>
+                                </div>
+                            </div>
                     </div>
                 </div>
             </div>
@@ -71,8 +113,49 @@
         let nextPageIndex, previousPageIndex, pageCount, rowsPerPage = 10;
 
         $(document).ready(function () {
-            getApplication()
+            getRole()
+
+            //Initialize Select2 Elements
+            $('.select2').select2()
+
+            //Initialize Select2 Elements
+            $('.select2bs4').select2({
+                theme: 'bootstrap4'
+            })
         })
+        let roleList;
+        function getRole() {
+            $.ajax({
+                url: '/Admin/GetRole',
+                type: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + getCookie('auth_token')
+                },
+                data: { },
+                success: function (res) {
+                    let data = res.data
+                    roleList = data
+                    for (let i = 0; i < data.length; i++) {
+                        let opt = document.createElement('option');
+                        opt.value = data[i].id;
+                        opt.innerHTML = data[i].role;
+                        document.getElementById('role_new').appendChild(opt);
+                        if (i == 0) {
+                            document.getElementById('role_new').selectedIndex = i
+                        }
+                    }
+                    getApplication()
+                },
+                error: function (err) {
+                    if (err.status == 401) {
+                        logout();
+                    }
+                    else {
+                        alert('An error occurred. ' + err.responseText);
+                    }
+                }
+            });
+        }
 
         let dataApplication;
         function getApplication() {
@@ -133,13 +216,22 @@
             let tableBody = '';
 
             paginatedData.forEach(row => {
-
+                htmlRoleList = ''
+                for(let i = 0; i < roleList.length; i++){
+                    if(row.id_role == roleList[i].id){
+                        htmlRoleList += `<option selected value="${roleList[i].id}" >${roleList[i].role}</option>`
+                    }
+                    else{
+                        htmlRoleList += `<option value="${roleList[i].id}" >${roleList[i].role}</option>`
+                    }
+                }
                 tableBody += `<tr>
                                     <td>${row.username}</td>
                                     <td>${row.email}</td>
                                     <td>${row.fullname}</td>
                                     <td>${convertDate(row.create_at)}</td>
                                     <td>${convertDate(row.update_at)}</td>
+                                    <td>${row.role}</td>
                                     <td>
                                         <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#modal-${row.username}">Update</button>
                                         <button type="button" class="btn btn-danger" onclick="deleteUser('${row.username}')">Delete</button>
@@ -147,40 +239,47 @@
                                 </tr>`;
 
                 htmlModal = ` <div class="modal fade" id="modal-${row.username}">
-                                                <div class="modal-dialog modal-xl">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                                <h4 class="modal-title">Username: <b>${row.username}</b></h4>
-                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                <span aria-hidden="true">&times;</span>
-                                                            </button>
-                                                        </div>
-                                                        <div class="modal-body">
+                                    <div class="modal-dialog modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                    <h4 class="modal-title">Username: <b>${row.username}</b></h4>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
 
-                                                        <div class="form-group" id="divUsername">
-                                                            <label for="username">Username</label>
-                                                            <input type="text" class="form-control" id="username" value="${row.username}" placeholder="Username" disabled>
-                                                        </div>
-                                                        <div class="form-group" id="">
-                                                            <label for="email">Email</label>
-                                                            <input type="text" class="form-control" id="email" value="${row.email}" placeholder="Email" >
-                                                        </div>
-                                                        <div class="form-group" id="">
-                                                            <label for="fullname">Full Name</label>
-                                                            <input type="text" class="form-control" id="fullname" value="${row.fullname}" placeholder="Fullname" >
-                                                        </div>
-                                                        <div class="form-group" id="">
-                                                            <label for="password">Password mới</label>
-                                                            <input type="password" class="form-control" id="password" placeholder="Password" >
-                                                        </div>
-                                                        <div class="form-group" id="">
-                                                            <label for="password">Nhập lại password</label>
-                                                            <input type="password" class="form-control" id="password_again" placeholder="Nhập lại password" >
-                                                        </div>
-                                                        <button class="btn btn-warning" onclick="update()" id="updateBtn">Update</button>
-                                                    </div>
-                                                </div>
-                                            </div>`;
+                                            <div class="form-group">
+                                                <label for="username_${row.username}">Username</label>
+                                                <input type="text" class="form-control" id="username_${row.username}" value="${row.username}" placeholder="Username" disabled>
+                                            </div>
+                                            <div class="form-group" id="">
+                                                <label for="email_${row.username}">Email</label>
+                                                <input type="text" class="form-control" id="email_${row.username}" value="${row.email}" placeholder="Email" >
+                                            </div>
+                                            <div class="form-group" id="">
+                                                <label for="fullname_${row.username}">Full Name</label>
+                                                <input type="text" class="form-control" id="fullname_${row.username}" value="${row.fullname}" placeholder="Fullname" >
+                                            </div>
+                                            <div class="form-group" id="">
+                                                <label for="password_${row.username}">Password mới</label>
+                                                <input type="password" class="form-control" id="password_${row.username}" placeholder="Password" >
+                                            </div>
+                                            <div class="form-group" id="">
+                                                <label for="password_again_${row.username}">Nhập lại password</label>
+                                                <input type="password" class="form-control" id="password_again_${row.username}" placeholder="Nhập lại password" >
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="role_${row.username}">Phân quyền</label>
+                                                <select class="form-control select2bs4" style="width: 100%;" id="role_${row.username}">
+                                                    ${htmlRoleList}
+                                                </select>
+                                            </div>
+                                            <button class="btn btn-warning" onclick="update('${row.username}')" id="updateBtn">Update</button>
+                                        </div>
+                                    </div>
+                                </div>`;
+
                 $('#modal-all').append(htmlModal)
 
             });
@@ -224,38 +323,39 @@
             renderTable(dataApplication, nextPageIndex, rowsPerPage)
         }
 
-        function update(){
-            if($('#password').val()){
-                if($('#password').val() !== $('#password_again').val()){
+        function update(username){
+            if($(`#password_${username}`).val()){
+                if($(`#password_${username}`).val() !== $(`#password_again_${username}`).val()){
                     alert('Mật khẩu và nhập lại mật khẩu phải giống nhau!')
                     return;
                 }
                 else{
                     $.ajax({
-                    url: '/Admin/UpdateUserInfoWithPwd',
-                    type: 'POST',
-                    headers: {
-                        'Authorization': 'Bearer ' + getCookie('esign_token')
-                    },
-                    data: {
-                        username: $('#username').val(),
-                        email: $('#email').val(),
-                        fullname: $('#fullname').val(),
-                        password: $('#password').val(),
-                    },
-                    success: function (res) {
-                        alert(res.message)
-                        window.location.reload()
-                    },
-                    error: function (err) {
-                        if (err.status == 401) {
-                            logout();
+                        url: '/Admin/UpdateUserInfoWithPwd',
+                        type: 'POST',
+                        headers: {
+                            'Authorization': 'Bearer ' + getCookie('esign_token')
+                        },
+                        data: {
+                            username: $(`#username_${username}`).val(),
+                            email: $(`#email_${username}`).val(),
+                            fullname: $(`#fullname_${username}`).val(),
+                            password: $(`#password_${username}`).val(),
+                            id_role: $(`#role_${username}`).val() * 1,
+                        },
+                        success: function (res) {
+                            alert(res.message)
+                            window.location.reload()
+                        },
+                        error: function (err) {
+                            if (err.status == 401) {
+                                logout();
+                            }
+                            else {
+                                alert('An error occurred. ' + err.responseText);
+                            }
                         }
-                        else {
-                            alert('An error occurred. ' + err.responseText);
-                        }
-                    }
-                });
+                    });
                 }
             }
             else{
@@ -266,10 +366,10 @@
                         'Authorization': 'Bearer ' + getCookie('esign_token')
                     },
                     data: {
-                        username: $('#username').val(),
-                        email: $('#email').val(),
-                        fullname: $('#fullname').val(),
-
+                        username: $(`#username_${username}`).val(),
+                        email: $(`#email_${username}`).val(),
+                        fullname: $(`#fullname_${username}`).val(),
+                        id_role: $(`#role_${username}`).val() * 1,
                     },
                     success: function (res) {
                         alert(res.message)
@@ -303,6 +403,53 @@
                         alert(res.message)
                         window.location.reload()
 
+                    },
+                    error: function (err) {
+                        if (err.status == 401) {
+                            logout();
+                        }
+                        else {
+                            alert('An error occurred. ' + err.responseText);
+                        }
+                    }
+                });
+            }
+        }
+
+        function addUser(){
+            if($('#username_new').val() == ''){
+                alert('Bạn cần nhập username!')
+                return;
+            }
+            if($('#password_new').val() == ''){
+                alert('Bạn cần nhập mật khẩu!')
+                return;
+            }
+            if($('#password_again_new').val() == ''){
+                alert('Bạn cần nhập lại mật khẩu!')
+                return;
+            }
+            if($('#password_new').val() !== $('#password_again_new').val()){
+                alert('Mật khẩu và nhập lại mật khẩu phải giống nhau!')
+                return;
+            }
+            else{
+                $.ajax({
+                    url: '/Admin/AddUser',
+                    type: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + getCookie('esign_token')
+                    },
+                    data: {
+                        username: $('#username_new').val(),
+                        email: $('#email_new').val(),
+                        fullname: $('#fullname_new').val(),
+                        password: $('#password_new').val(),
+                        id_role: $('#role_new').val() * 1,
+                    },
+                    success: function (res) {
+                        alert(res.message)
+                        window.location.reload()
                     },
                     error: function (err) {
                         if (err.status == 401) {

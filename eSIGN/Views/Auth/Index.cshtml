@@ -109,7 +109,8 @@
                     localStorage.setItem('fullname', res.data[0].fullname);
                     localStorage.setItem('email', res.data[0].email);
                     localStorage.setItem('user_id', res.data[0].username);
-                    localStorage.setItem('role', JSON.stringify(res.data[0].role));
+                    localStorage.setItem('id_role', res.data[0].id_role);
+                    localStorage.setItem('role', res.data[0].role);
 
                     document.cookie = "esign_token=" + res.data[0].token + "; path=/; expires=" + new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000).toUTCString();
 

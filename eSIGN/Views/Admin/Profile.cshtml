@@ -106,9 +106,9 @@
 @section Scripts {
     <script>
         $(function () {
-            let role = JSON.parse(localStorage.getItem('role'));
+            
             $('#fullnameMain').html(localStorage.getItem('fullname'));
-            $('#roleMain').html(role[0].role_name);
+            $('#roleMain').html(localStorage.getItem('role'));
 
             $('#username').val(localStorage.getItem('user_id'));
             $('#email').val(localStorage.getItem('email'));

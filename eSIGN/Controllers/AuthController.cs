@@ -76,21 +76,24 @@ namespace HungThinh.Controllers
                             List<Dictionary<string, object>> userList = new List<Dictionary<string, object>>();
                             string fullname = data[0]["fullname"].ToString();
                             string email = data[0]["email"].ToString();
+                            int id_role = Convert.ToInt32(data[0]["id_role"]);
+                            string role = data[0]["role"].ToString();
 
-                            using var connection2 = new SqlConnection(_connection.DefaultConnection);
+                            //using var connection2 = new SqlConnection(_connection.DefaultConnection);
 
-                            using var command2 = new SqlCommand("HT_GetRoleByUsername", connection2) { CommandType = CommandType.StoredProcedure };
-                            command2.Parameters.AddWithValue("@username", username);
+                            //using var command2 = new SqlCommand("HT_GetRoleByUsername", connection2) { CommandType = CommandType.StoredProcedure };
+                            //command2.Parameters.AddWithValue("@username", username);
 
-                            connection2.Open();
-                            var reader2 = command2.ExecuteReader();
-                            List<Dictionary<string, object>> data2 = CommonFunction.GetDataFromProcedure(reader2);
-                            connection2.Close();
+                            //connection2.Open();
+                            //var reader2 = command2.ExecuteReader();
+                            //List<Dictionary<string, object>> data2 = CommonFunction.GetDataFromProcedure(reader2);
+                            //connection2.Close();
 
                             userInfo.Add("username", username);
                             userInfo.Add("fullname", fullname);
                             userInfo.Add("email", email);
-                            userInfo.Add("role", data2);
+                            userInfo.Add("id_role", id_role);
+                            userInfo.Add("role", role);
 
                             userInfo.Add("token", CommonFunction.GenerateToken(username));
                             userList.Add(userInfo);

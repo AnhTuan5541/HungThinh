@@ -99,14 +99,14 @@ namespace HungThinh.Common
             };
 
             // Kiểm tra loại tệp
-            var allowedExtensions = new[] { ".docx", ".xls", ".xlsx", ".pdf", ".pptx" };
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
             var fileExtension = Path.GetExtension(file.FileName).ToLower();
             if (!allowedExtensions.Contains(fileExtension))
             {
                 response = new CommonResponse<Dictionary<string, object>>
                 {
                     StatusCode = CommonFunction.FAIL,
-                    Message = "File type is not supported. Please upload file .docx, .xls, .xlsx, .pdf, .pptx",
+                    Message = "Loại file không hỗ trợ. Chỉ hỗ trợ các file .jpg, .jpeg, .png",
                     Data = null,
                     size = 0
                 };
@@ -114,13 +114,13 @@ namespace HungThinh.Common
             }
 
             // Kiểm tra kích thước tệp (giới hạn 5MB)
-            var maxFileSize = 5 * 1024 * 1024; // 5MB
+            var maxFileSize = 10 * 1024 * 1024; // 5MB
             if (file.Length > maxFileSize)
             {
                 response = new CommonResponse<Dictionary<string, object>>
                 {
                     StatusCode = CommonFunction.FAIL,
-                    Message = "File size exceeds allowed limit (5MB limit).",
+                    Message = "Giới hạn dung lượng file là 10MB (10MB limit).",
                     Data = null,
                     size = 0
                 };

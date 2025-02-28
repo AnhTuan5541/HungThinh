@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "Banner";
+    ViewData["Title"] = "Quản lý dự án";
 }
 
 <!-- Content Wrapper. Contains page content -->
@@ -9,12 +9,12 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0">Banner</h1>
+                    <h1 class="m-0">Quản lý dự án</h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="#">Home</a></li>
-                        <li class="breadcrumb-item active">Banner</li>
+                        <li class="breadcrumb-item active">Quản lý dự án</li>
                     </ol>
                 </div><!-- /.col -->
             </div><!-- /.row -->
@@ -25,35 +25,7 @@
     <section class="content">
         <div class="container-fluid">
             <div class="row">
-                <div class="col-md-4">
-                    <div class="card card-warning">
-                        <div class="card-header">
-                            <h3 class="card-title">Banner</h3>
-                        </div>
-                        <!-- /.card-header -->
-                        <!-- form start -->
-                        <div>
-                            <div class="card-body">
-                                <div class="form-group" id="">
-                                    <label for="title">Tiêu đề</label>
-                                    <input type="text" class="form-control" id="title" placeholder="Tiêu đề" disabled="">
-                                </div>
-                                <div class="form-group" id="">
-                                    <label for="content">Nội dung</label>
-                                    <textarea class="form-control" rows="6" id="content" disabled></textarea>
-                                </div>
-                            </div>
-                            <!-- /.card-body -->
-
-                            <div class="card-footer">
-                                <button class="btn btn-warning" onclick="update()" id="updateBtn">Update</button>
-                                <button class="btn btn-primary" onclick="submit()" id="submitBtn" style="display:none">Submit</button>
-                                <button class="btn btn-secondary" onclick="cancel()" id="cancelBtn" style="display:none">Cancel</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-8">
+                <div class="col-12">
                     <div class="card">
                         @* <div class="card-header">
                         <h3 class="card-title">DataTable with minimal features & hover style</h3>
@@ -61,14 +33,17 @@
                         <!-- /.card-header -->
                         <div class="card-body">
                             <div>
-                                <button class="btn btn-success" data-toggle="modal" data-target="#modal-add" id="updateBtn" style="float:left">Thêm ảnh</button>
+                                <button class="btn btn-success" data-toggle="modal" data-target="#modal-add" id="updateBtn" style="float:left">Thêm dự án</button>
                                 <input type="text" class="search" name="search" id="search" onkeyup="search()" placeholder="Search..." />
                             </div>
                             <table id="dataTable" class="table table-bordered table-hover">
                                 <thead>
                                     <tr>
-                                        <th>Tên ảnh</th>
+                                        <th>Dự án</th>
+                                        <th>Nội dung</th>
                                         <th>Ảnh</th>
+                                        <th>Ngày tạo</th>
+                                        <th>Ngày sửa</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -88,15 +63,20 @@
                             <div class="modal-dialog modal-lg">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h4 class="modal-title">Thêm ảnh</b></h4>
+                                        <h4 class="modal-title">Thêm dự án</b></h4>
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
                                     </div>
                                     <div class="modal-body">
+
+                                        <div class="form-group">
+                                            <label for="project_new"><span style="color: red">*</span> Dự án</label>
+                                            <input type="text" class="form-control" id="project_new" value="" placeholder="Dự án">
+                                        </div>
                                         <div class="form-group" id="">
-                                            <label for="image_name">Tên ảnh</label>
-                                            <input type="text" class="form-control" id="image_name" placeholder="Tên ảnh">
+                                            <label for="detail_new">Nội dung</label>
+                                            <textarea id="detail_new" rows="5"></textarea>
                                         </div>
                                         <div class="form-group">
                                             <label for="attachFile">Attach file</label>
@@ -110,15 +90,14 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <button class="btn btn-success" onclick="uploadImage()" id="uploadImage">Thêm ảnh</button>
+                                        <button class="btn btn-success" onclick="addItem()" id="addBtn">Thêm dự án</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div><!-- /.container-fluid -->
+            </div><!-- /.container-fluid -->
     </section>
     <!-- /.content -->
 </div>
@@ -126,51 +105,25 @@
 @section Scripts {
     <script>
         let nextPageIndex, previousPageIndex, pageCount, rowsPerPage = 10;
-        $(function () {
+
+        $(document).ready(function () {
+            // Summernote
+            $('#detail_new').summernote()
             bsCustomFileInput.init();
-            getBanner()
-            getImage()
+            getItem()
 
-        });
-        function getBanner(){
-            $.ajax({
-                url: '/Banner/GetBanner',
-                type: 'GET',
-                headers: {
-                    'Authorization': 'Bearer ' + getCookie('esign_token')
-                },
-                data: {
+        })
 
-                },
-                success: function (res) {
-                    let data = res.data
-                    $(`#title`).val(data[0].title)
-                    $(`#content`).val(data[0].content)
-
-                },
-                error: function (err) {
-                    if (err.status == 401) {
-                        logout();
-                    }
-                    else {
-                        alert('An error occurred. ' + err.responseText);
-                    }
-                }
-            });
-        }
         let dataApplication;
-        function getImage(){
+        function getItem() {
             $.ajax({
-                url: '/Banner/GetImage',
+                url: '/Project/GetProject',
                 type: 'GET',
                 headers: {
                     'Authorization': 'Bearer ' + getCookie('esign_token')
                 },
-                data: {
-
-                },
+                data: { },
                 success: function (res) {
-                    let data = res.data
                     dataApplication = res.data
                     setupPagination(dataApplication);
 
@@ -185,11 +138,13 @@
                 }
             });
         }
+
         function search() {
             let search = document.getElementById("search");
-            let filteredData = dataApplication.filter(item => item.image_name.includes(search.value));
+            let filteredData = dataApplication.filter(item => item.project.includes(search.value));
             setupPagination(filteredData)
         }
+
         function setupPagination(data) {
             pageCount = Math.ceil(data.length / rowsPerPage);
 
@@ -220,13 +175,15 @@
             paginatedData.forEach(row => {
                 let urlList = data[0].file_name.split('.')
                 let extensionFile = urlList[urlList.length - 1]
-
                 tableBody += `<tr>
-                                    <td>${row.image_name}</td>
+                                    <td>${row.project}</td>
+                                    <td>${row.detail}</td>
                                     <td><img src="data:image/${extensionFile};base64, ${row.file_url}" alt="${row.file_name}" width="300" height="200"></td>
+                                    <td>${convertDate(row.create_at)}</td>
+                                    <td>${convertDate(row.update_at)}</td>
                                     <td>
                                         <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#modal-${row.id}">Update</button>
-                                        <button type="button" class="btn btn-danger" onclick="deleteFile(${row.id})">Delete</button>
+                                        <button type="button" class="btn btn-danger" onclick="deleteItem(${row.id})">Delete</button>
                                     </td>
                                 </tr>`;
 
@@ -234,7 +191,7 @@
                                     <div class="modal-dialog modal-lg">
                                         <div class="modal-content">
                                             <div class="modal-header">
-                                                <h4 class="modal-title">Tên ảnh: <b>${row.image_name}</b></h4>
+                                                    <h4 class="modal-title">Dự án: <b>${row.project}</b></h4>
                                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                     <span aria-hidden="true">&times;</span>
                                                 </button>
@@ -242,8 +199,12 @@
                                             <div class="modal-body">
 
                                             <div class="form-group">
-                                                <label for="image_name_update_${row.id}">Tên ảnh</label>
-                                                <input type="text" class="form-control" id="image_name_update_${row.id}" value="${row.image_name}" placeholder="Tên ảnh">
+                                                <label for="project_${row.id}"><span style="color: red">*</span> Dự án</label>
+                                                <input type="text" class="form-control" id="project_${row.id}" value="${row.project}" placeholder="Dự án">
+                                            </div>
+                                            <div class="form-group" id="">
+                                                <label for="detail_${row.id}">Nội dung</label>
+                                                <textarea id="detail_${row.id}" rows="5" >${row.detail}</textarea>
                                             </div>
                                             <div class="form-group">
                                                 <label for="attachFileUpdate_${row.id}">Attach file</label>
@@ -257,12 +218,13 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <button class="btn btn-warning" onclick="updateImage(${row.id})" id="updateImageBtn">Update</button>
+                                            <button class="btn btn-warning" onclick="updateImage(${row.id})" id="updateBtn">Update</button>
                                         </div>
                                     </div>
                                 </div>`;
 
                 $('#modal-all').append(htmlModal)
+                $(`#detail_${row.id}`).summernote()
                 bsCustomFileInput.init();
             });
 
@@ -305,33 +267,60 @@
             renderTable(dataApplication, nextPageIndex, rowsPerPage)
         }
 
-        function update(){
-            document.getElementById('updateBtn').style.display = 'none';
-            document.getElementById('submitBtn').style.display = 'inline-block';
-            document.getElementById('cancelBtn').style.display = 'inline-block';
+        function updateImage(id){
+            if($(`#project_${id}`).val() == ''){
+                alert('Bạn cần nhập dự án!')
+                return;
+            }
+            var fileUpload = document.getElementById("attachFileUpdate_"+ id);
+            if (fileUpload.files.length != 0) {
+                let file = new FormData();
+                file.append("file", fileUpload.files[0])
 
-            document.getElementById('title').disabled = false;
-            document.getElementById('content').disabled = false;
+                $.ajax({
+                    url: '/Banner/UploadImage',
+                    type: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + getCookie('esign_token')
+                    },
+                    data: file,
+                    contentType: false,
+                    processData: false,
+                    success: function (res) {
+                        if (res.statusCode == "FAIL") {
+                            alert(res.message)
+                        } else {
+                            updateFile(res.data[0].fileUrl, res.data[0].fileName, id)
+                        }
+
+                    },
+                    error: function (err) {
+                        if (err.status == 401) {
+                            logout();
+                        }
+                        else {
+                            alert('An error occurred. ' + err.responseText);
+                        }
+                    }
+                });
+            }
+            else{
+                updateFile('', '', id)
+            }
         }
-        function cancel(){
-            document.getElementById('updateBtn').style.display = 'inline-block';
-            document.getElementById('submitBtn').style.display = 'none';
-            document.getElementById('cancelBtn').style.display = 'none';
-
-            document.getElementById('title').disabled = true;
-            document.getElementById('content').disabled = true;
-        }
-
-        function submit() {
+        function updateFile(fileUrl, fileName, id){
             $.ajax({
-                url: '/Banner/UpdateBanner',
+                url: '/Project/UpdateFile',
                 type: 'POST',
                 headers: {
                     'Authorization': 'Bearer ' + getCookie('esign_token')
                 },
                 data: {
-                    title: $('#title').val(),
-                    content: $('#content').val(),
+                    id: id,
+                    project: $(`#project_${id}`).val(),
+                    detail: $(`#detail_${id}`).val(),
+                    file_url: fileUrl,
+                    file_name: fileName,
                 },
                 success: function (res) {
                     alert(res.message)
@@ -348,7 +337,39 @@
             });
         }
 
-        function uploadImage(){
+        function deleteItem(id){
+            if (confirm('Bạn có chắc chắn muốn xóa dự án này?')) {
+                $.ajax({
+                    url: '/Project/DeleteProject',
+                    type: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + getCookie('esign_token')
+                    },
+                    data: {
+                        id: id,
+                    },
+                    success: function (res) {
+                        alert(res.message)
+                        window.location.reload()
+
+                    },
+                    error: function (err) {
+                        if (err.status == 401) {
+                            logout();
+                        }
+                        else {
+                            alert('An error occurred. ' + err.responseText);
+                        }
+                    }
+                });
+            }
+        }
+
+        function addItem(){
+            if($('#project').val() == ''){
+                alert('Bạn cần nhập dự án!')
+                return;
+            }
             var fileUpload = document.getElementById("attachFile");
             if (fileUpload.files.length != 0) {
                 let file = new FormData();
@@ -381,17 +402,22 @@
                     }
                 });
             }
+            else{
+                alert('Bạn cần thêm ảnh dự án!')
+                return;
+            }
         }
 
         function uploadFile(fileUrl, fileName){
             $.ajax({
-                url: '/Banner/UploadFile',
+                url: '/Project/UploadFile',
                 type: 'POST',
                 headers: {
                     'Authorization': 'Bearer ' + getCookie('esign_token')
                 },
                 data: {
-                    image_name: $(`#image_name`).val(),
+                    project: $('#project_new').val(),
+                    detail: $('#detail_new').val(),
                     file_url: fileUrl,
                     file_name: fileName,
                 },
@@ -409,95 +435,6 @@
                 }
             });
         }
-
-        function updateImage(id_image){
-            var fileUpload = document.getElementById("attachFileUpdate_"+ id_image);
-            if (fileUpload.files.length != 0) {
-                let file = new FormData();
-                file.append("file", fileUpload.files[0])
-
-                $.ajax({
-                    url: '/Banner/UploadImage',
-                    type: 'POST',
-                    headers: {
-                        'Authorization': 'Bearer ' + getCookie('esign_token')
-                    },
-                    data: file,
-                    contentType: false,
-                    processData: false,
-                    success: function (res) {
-                        if (res.statusCode == "FAIL") {
-                            alert(res.message)
-                        } else {
-                            updateFile(res.data[0].fileUrl, res.data[0].fileName, id_image)
-                        }
-
-                    },
-                    error: function (err) {
-                        if (err.status == 401) {
-                            logout();
-                        }
-                        else {
-                            alert('An error occurred. ' + err.responseText);
-                        }
-                    }
-                });
-            }
-        }
-        function updateFile(fileUrl, fileName, id_image){
-            $.ajax({
-                url: '/Banner/UpdateFile',
-                type: 'POST',
-                headers: {
-                    'Authorization': 'Bearer ' + getCookie('esign_token')
-                },
-                data: {
-                    id_image: id_image,
-                    image_name: $(`#image_name_update_${id_image}`).val(),
-                    file_url: fileUrl,
-                    file_name: fileName,
-                },
-                success: function (res) {
-                    alert(res.message)
-                    window.location.reload()
-                },
-                error: function (err) {
-                    if (err.status == 401) {
-                        logout();
-                    }
-                    else {
-                        alert('An error occurred. ' + err.responseText);
-                    }
-                }
-            });
-        }
-        function deleteFile(id_image){
-            if(confirm('Bạn có chắc chắn muốn xóa ảnh banner này?')){
-                $.ajax({
-                    url: '/Banner/DeleteFile',
-                    type: 'POST',
-                    headers: {
-                        'Authorization': 'Bearer ' + getCookie('esign_token')
-                    },
-                    data: {
-                        id_image: id_image,
-                    },
-                    success: function (res) {
-                        alert(res.message)
-                        window.location.reload()
-                    },
-                    error: function (err) {
-                        if (err.status == 401) {
-                            logout();
-                        }
-                        else {
-                            alert('An error occurred. ' + err.responseText);
-                        }
-                    }
-                });
-            }
-        }
-
 
     </script>
 }

@@ -1,0 +1,351 @@
+﻿@{
+    ViewData["Title"] = "Quản lý lĩnh vực";
+}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0">Quản lý lĩnh vực</h1>
+                </div><!-- /.col -->
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item active">Quản lý lĩnh vực</li>
+                    </ol>
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        @* <div class="card-header">
+                        <h3 class="card-title">DataTable with minimal features & hover style</h3>
+                        </div> *@
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <div>
+                                <button class="btn btn-success" data-toggle="modal" data-target="#modal-add" id="updateBtn" style="float:left">Thêm lĩnh vực</button>
+                                <input type="text" class="search" name="search" id="search" onkeyup="search()" placeholder="Search..." />
+                            </div>
+                            <table id="dataTable" class="table table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Lĩnh vực</th>
+                                        <th>Nội dung</th>
+                                        <th>Icon</th>
+                                        <th>Ngày tạo</th>
+                                        <th>Ngày sửa</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tBody">
+                                </tbody>
+                            </table>
+                            <div class="pagination" id="pagination">
+                                @* <a href="#">&laquo;</a> *@
+
+                                @* <a href="#">&raquo;</a> *@
+                            </div>
+                        </div>
+                        <!-- /.card-body -->
+                        <div id="modal-all">
+                        </div>
+                        <div class="modal fade" id="modal-add">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Thêm lĩnh vực</b></h4>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+
+                                        <div class="form-group">
+                                            <label for="linh_vuc_new"><span style="color: red">*</span> Lĩnh vực</label>
+                                            <input type="text" class="form-control" id="linh_vuc_new" value="" placeholder="Lĩnh vực">
+                                        </div>
+                                        <div class="form-group" id="">
+                                            <label for="detail_new">Nội dung</label>
+                                            <textarea id="detail_new" rows="5"></textarea>
+                                        </div>
+                                        <div class="form-group" id="">
+                                            <label for="icon_new">Icon <span style="color: red">(Note: Truy cập <a href="https://fontawesome.com/search?ic=free" target="_blank">link </a>này, tìm icon, copy và paste text vào đây)</span> </label>
+                                            <input type="text" class="form-control" id="icon_new" value="" placeholder="Icon">
+                                        </div>
+                                        <button class="btn btn-success" onclick="addItem()" id="addBtn">Thêm lĩnh vực</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+@section Scripts {
+    <script>
+        let nextPageIndex, previousPageIndex, pageCount, rowsPerPage = 10;
+
+        $(document).ready(function () {
+            // Summernote
+            $('#detail_new').summernote()
+
+            getItem()
+
+        })
+
+        let dataApplication;
+        function getItem() {
+            $.ajax({
+                url: '/LinhVuc/GetLinhVuc',
+                type: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + getCookie('esign_token')
+                },
+                data: { },
+                success: function (res) {
+                    dataApplication = res.data
+                    setupPagination(dataApplication);
+
+                },
+                error: function (err) {
+                    if (err.status == 401) {
+                        logout();
+                    }
+                    else {
+                        alert('An error occurred. ' + err.responseText);
+                    }
+                }
+            });
+        }
+
+        function search() {
+            let search = document.getElementById("search");
+            let filteredData = dataApplication.filter(item => item.linh_vuc.includes(search.value));
+            setupPagination(filteredData)
+        }
+
+        function setupPagination(data) {
+            pageCount = Math.ceil(data.length / rowsPerPage);
+
+            let pagination = '';
+
+            pagination += `<a href="javascript:void(0)" class="a-pagination d-none" id="idPaginate_before" onclick="previousPage()"><<</a>`;
+            for (let i = 1; i <= pageCount; i++) {
+                if(i > 5){
+                    pagination += `<a href="javascript:void(0)" class="a-pagination d-none" id="idPaginate_${i}" onclick="renderTable(dataApplication, ${i}, ${rowsPerPage})">${i}</a>`;
+                }
+                else{
+                    pagination += `<a href="javascript:void(0)" class="a-pagination" id="idPaginate_${i}" onclick="renderTable(dataApplication, ${i}, ${rowsPerPage})">${i}</a>`;
+                }
+            }
+            if (pageCount > 5) pagination += `<a href="javascript:void(0)" class="a-pagination" id="idPaginate_next" onclick="nextPage()">>></a>`;
+
+            $('#pagination').html(pagination);
+            renderTable(data, 1, rowsPerPage);
+        }
+        function renderTable(data, page, rowsPerPage) {
+            nextPageIndex = page + 1
+            previousPageIndex = page - 1
+            const start = (page - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
+            const paginatedData = data.slice(start, end);
+            let tableBody = '';
+
+            paginatedData.forEach(row => {
+                let iconHtml = escapeHtml(row.icon);
+                tableBody += `<tr>
+                                    <td>${row.linh_vuc}</td>
+                                    <td>${row.detail}</td>
+                                    <td>${iconHtml}</td>
+                                    <td>${convertDate(row.create_at)}</td>
+                                    <td>${convertDate(row.update_at)}</td>
+                                    <td>
+                                        <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#modal-${row.id}">Update</button>
+                                        <button type="button" class="btn btn-danger" onclick="deleteItem(${row.id})">Delete</button>
+                                    </td>
+                                </tr>`;
+                htmlModal = ` <div class="modal fade" id="modal-${row.id}">
+                                    <div class="modal-dialog modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                    <h4 class="modal-title">Lĩnh vực: <b>${row.linh_vuc}</b></h4>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+
+                                            <div class="form-group">
+                                                <label for="linh_vuc_${row.id}"><span style="color: red">*</span> Lĩnh vực</label>
+                                                <input type="text" class="form-control" id="linh_vuc_${row.id}" value="${row.linh_vuc}" placeholder="Lĩnh vực">
+                                            </div>
+                                            <div class="form-group" id="">
+                                                <label for="detail_${row.id}">Nội dung</label>
+                                                <textarea id="detail_${row.id}" rows="5" >${row.detail}</textarea>
+                                            </div>
+                                            <div class="form-group" id="">
+                                                <label for="icon_${row.id}">Icon <span style="color: red">(Note: Truy cập <a href="https://fontawesome.com/search?ic=free" target="_blank">link </a>này, tìm icon, copy và paste text vào đây)</span></label>
+                                                <input type="text" class="form-control" id="icon_${row.id}" value="${iconHtml}" placeholder="Icon" >
+                                            </div>
+                                            <button class="btn btn-warning" onclick="update(${row.id})" id="updateBtn">Update</button>
+                                        </div>
+                                    </div>
+                                </div>`;
+
+                $('#modal-all').append(htmlModal)
+                $(`#detail_${row.id}`).summernote()
+            });
+
+            $('#tBody').html(tableBody);
+
+            const menuItems = document.querySelectorAll('.a-pagination');
+            menuItems.forEach(menu => {
+                menu.classList.remove('active');
+            });
+            $('#idPaginate_' + page).addClass("active");
+
+            if(page >= 6){
+                $('#idPaginate_before').removeClass('d-none');
+                $(`#idPaginate_${page}`).removeClass('d-none');
+                $(`#idPaginate_${page - 5}`).addClass('d-none');
+                $(`#idPaginate_${page + 5}`).addClass('d-none');
+            }
+
+            if (page == pageCount) {
+                $('#idPaginate_next').addClass('d-none');
+            }
+            if (page == pageCount - 5) {
+                $('#idPaginate_next').removeClass('d-none');
+            }
+            if(page <= 5){
+                $('#idPaginate_next').removeClass('d-none');
+                $(`#idPaginate_${page}`).removeClass('d-none');
+                $(`#idPaginate_${page+5}`).addClass('d-none');
+            }
+            if (page == 1) {
+                $('#idPaginate_before').addClass('d-none');
+            }
+        }
+
+        function previousPage() {
+            renderTable(dataApplication, previousPageIndex, rowsPerPage)
+        }
+
+        function nextPage() {
+            renderTable(dataApplication, nextPageIndex, rowsPerPage)
+        }
+
+        function update(id){
+            if($(`#linh_vuc_${id}`).val() == ''){
+                alert('Bạn cần nhập lĩnh vực!')
+                return;
+            }
+            $.ajax({
+                url: '/LinhVuc/UpdateLinhVuc',
+                type: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + getCookie('esign_token')
+                },
+                data: {
+                    id: id,
+                    linh_vuc: $(`#linh_vuc_${id}`).val(),
+                    detail: $(`#detail_${id}`).val(),
+                    icon: $(`#icon_${id}`).val(),
+                },
+                success: function (res) {
+                    alert(res.message)
+                    window.location.reload()
+                },
+                error: function (err) {
+                    if (err.status == 401) {
+                        logout();
+                    }
+                    else {
+                        alert('An error occurred. ' + err.responseText);
+                    }
+                }
+            });
+        }
+
+        function deleteItem(id){
+            if (confirm('Bạn có chắc chắn muốn xóa lĩnh vực này?')) {
+                $.ajax({
+                    url: '/LinhVuc/DeleteLinhVuc',
+                    type: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + getCookie('esign_token')
+                    },
+                    data: {
+                        id: id,
+                    },
+                    success: function (res) {
+                        alert(res.message)
+                        window.location.reload()
+
+                    },
+                    error: function (err) {
+                        if (err.status == 401) {
+                            logout();
+                        }
+                        else {
+                            alert('An error occurred. ' + err.responseText);
+                        }
+                    }
+                });
+            }
+        }
+
+        function addItem(){
+            if($('#linh_vuc').val() == ''){
+                alert('Bạn cần nhập lĩnh vực!')
+                return;
+            }
+            $.ajax({
+                url: '/LinhVuc/AddLinhVuc',
+                type: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + getCookie('esign_token')
+                },
+                data: {
+                    linh_vuc: $('#linh_vuc_new').val(),
+                    detail: $('#detail_new').val(),
+                    icon: $('#icon_new').val(),
+                },
+                success: function (res) {
+                    alert(res.message)
+                    window.location.reload()
+                },
+                error: function (err) {
+                    if (err.status == 401) {
+                        logout();
+                    }
+                    else {
+                        alert('An error occurred. ' + err.responseText);
+                    }
+                }
+            });
+        }
+        function escapeHtml(unsafe) {
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+    </script>
+}

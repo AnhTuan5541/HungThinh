@@ -11,7 +11,7 @@
 <main class="main">
 
     <!-- Page Title -->
-    <div class="page-title dark-background" style="background-image: url(assets/img/page-title-bg.jpg);">
+    <div class="page-title dark-background" style="background-image: url(/assets/img/page-title-bg.jpg);">
         <div class="container position-relative">
             <h1>Tin tức</h1>
             <nav class="breadcrumbs">
@@ -87,11 +87,11 @@
                                         <div class="card-item">
                                             <div class="row">
                                                 <div class="col-xl-5">
-                                                    <div class="card-bg"><a href="\blog-detail.html"><img src="data:image/${extensionFile};base64, ${file_url}" alt=""></a></div>
+                                                    <div class="card-bg"><a href="/tin-tuc/chi-tiet?id=${data[i].id}"><img src="data:image/${extensionFile};base64, ${file_url}" alt=""></a></div>
                                                 </div>
                                                 <div class="col-xl-7 d-flex align-items-center">
                                                     <div class="card-body">
-                                                        <h4 class="card-title">${data[i].tin_tuc}</h4>
+                                                        <a href="/tin-tuc/chi-tiet?id=${data[i].id}"><h4 class="card-title">${data[i].tin_tuc}</h4></a>
                                                         <p>${truncateString100(data[i].detail)}</p>
                                                     </div>
                                                 </div>

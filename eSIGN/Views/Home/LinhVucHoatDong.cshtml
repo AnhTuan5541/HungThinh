@@ -11,7 +11,7 @@
 <main class="main">
 
     <!-- Page Title -->
-    <div class="page-title dark-background" style="background-image: url(assets/img/page-title-bg.jpg);">
+    <div class="page-title dark-background" style="background-image: url(/assets/img/page-title-bg.jpg);">
         <div class="container position-relative">
             <h1>Lĩnh vực hoạt động</h1>
             <nav class="breadcrumbs">
@@ -62,7 +62,7 @@
                                             </div>
                                             <h3>${data[i].linh_vuc}</h3>
                                             <p>${truncateString(data[i].detail)}</p>
-                                            <a href="#" class="readmore stretched-link">Đọc thêm <i class="bi bi-arrow-right"></i></a>
+                                            <a href="/linh-vuc/chi-tiet?id=${data[i].id}" class="readmore stretched-link">Đọc thêm <i class="bi bi-arrow-right"></i></a>
                                         </div>
                                     </div>`
                     }

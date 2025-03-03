@@ -31,7 +31,7 @@
                         <h3 class="card-title">DataTable with minimal features & hover style</h3>
                         </div> *@
                         <!-- /.card-header -->
-                        <div class="card-body">
+                        <div class="card-body" style="overflow-x: auto;">
                             <div>
                                 @* <button class="btn btn-success" data-toggle="modal" data-target="#modal-add" id="updateBtn" style="float:left">Thêm lĩnh vực</button> *@
                                 <input type="text" class="search" name="search" id="search" onkeyup="search()" placeholder="Search..." />
@@ -199,8 +199,8 @@
                                                 <input type="text" class="form-control" id="email_${row.id}" value="${row.email}" placeholder="Email liên hệ" >
                                             </div>
                                             <div class="form-group" id="">
-                                                <label for="dia_chi_google_map_${row.id}">Email liên hệ</label>
-                                                <input type="text" class="form-control" id="dia_chi_google_map_${row.id}" value="${htmlGoogleMap}" placeholder="Địa chỉ google map" >
+                                                <label for="dia_chi_google_map_${row.id}">Địa chỉ google map</label>
+                                                <textarea class="form-control" rows="5" id="dia_chi_google_map_${row.id}">${htmlGoogleMap}</textarea>
                                             </div>
                                             <button class="btn btn-warning" onclick="update(${row.id})" id="updateBtn">Update</button>
                                         </div>

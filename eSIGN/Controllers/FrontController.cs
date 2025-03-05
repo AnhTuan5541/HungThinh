@@ -20,6 +20,32 @@ namespace HungThinh.Controllers
             _connection = connection.Value;
         }
         [HttpGet]
+        public List<Dictionary<string, object>> GetTest()
+        {
+            string functionName = ControllerContext.ActionDescriptor.ControllerName + "/" + System.Reflection.MethodBase.GetCurrentMethod().Name;
+            string userid = "anonymous";
+            try
+            {
+                using var connection = new SqlConnection("Data Source=10.201.21.94,51133;Initial Catalog=VISODS;Integrated Security=True;User ID=vn\\vis_excel_user;Application Name=Microsoft Office 2016;Workstation ID=VNV1OFLTP00236;TrustServerCertificate=True");
+                using var command = new SqlCommand("SELECT * FROM dbo.FUNC_VISINV_RAWDIE_NEW()", connection);
+
+                // Thêm các tham số cho stored procedure (nếu cần)
+                //command.Parameters.AddWithValue("@role", role);
+
+                connection.Open();
+                var reader = command.ExecuteReader();
+                List<Dictionary<string, object>> data = CommonFunction.GetDataFromProcedure(reader);
+                connection.Close();
+
+                return data;
+            }
+            catch (Exception ex)
+            {
+                // Xử lý lỗi (ví dụ: log lỗi, trả về phản hồi lỗi)
+                return null;
+            }
+        }
+        [HttpGet]
         public IActionResult GetBanner()
         {
             string functionName = ControllerContext.ActionDescriptor.ControllerName + "/" + System.Reflection.MethodBase.GetCurrentMethod().Name;

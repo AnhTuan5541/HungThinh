@@ -1,5 +1,6 @@
 ﻿@{
     Layout = "~/Views/Shared/_LayoutUser.cshtml";
+    ViewData["Title-Front"] = "Dự án";
 }
 
 @section Styles {
@@ -78,7 +79,7 @@
 
                                                 <h3 class="post-title">${data[i].project}</h3>
                                                 <p>
-                                                    ${data[i].detail}
+                                                    ${truncateString(data[i].detail)}
                                                 </p>
                                                 <hr>
 

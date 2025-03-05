@@ -1,5 +1,6 @@
 ﻿@{
     Layout = "~/Views/Shared/_LayoutUser.cshtml";
+    ViewData["Title-Front"] = "Trang chủ";
 }
 
 @section Styles {
@@ -203,17 +204,38 @@
             getNangLuc()
             getProject()
             getTinTuc()
+
+            getTest()
         })
 
-        function getBanner(){
+        function getTest(){
             $.ajax({
-                url: '/Front/GetBanner',
+                url: '/Front/GetTest',
                 type: 'GET',
                 headers: {
                     
                 },
                 data: {
                     
+                },
+                success: function (res) {
+                    console.log(res)
+                },
+                error: function (err) {
+                    alert('An error occurred. ' + err.responseText);
+                }
+            });
+        }
+
+        function getBanner(){
+            $.ajax({
+                url: '/Front/GetBanner',
+                type: 'GET',
+                headers: {
+
+                },
+                data: {
+
                 },
                 success: function (res) {
                     let data = res.data

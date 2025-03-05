@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "Quản lý tin tức";
+    ViewData["Title"] = "Quản lý về chúng tôi";
 }
 
 <!-- Content Wrapper. Contains page content -->
@@ -9,12 +9,12 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0">Quản lý tin tức</h1>
+                    <h1 class="m-0">Quản lý về chúng tôi</h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="#">Home</a></li>
-                        <li class="breadcrumb-item active">Quản lý tin tức</li>
+                        <li class="breadcrumb-item active">Quản lý về chúng tôi</li>
                     </ol>
                 </div><!-- /.col -->
             </div><!-- /.row -->
@@ -33,16 +33,14 @@
                         <!-- /.card-header -->
                         <div class="card-body">
                             <div>
-                                <button class="btn btn-success" data-toggle="modal" data-target="#modal-add" id="updateBtn" style="float:left">Thêm tin tức</button>
                                 <input type="text" class="search" name="search" id="search" onkeyup="search()" placeholder="Search..." />
                             </div>
                             <table id="dataTable" class="table table-bordered table-hover">
                                 <thead>
                                     <tr>
-                                        <th>Tin tức</th>
+                                        <th>Tiêu đề</th>
                                         <th>Nội dung</th>
                                         <th>Ảnh</th>
-                                        <th>Ngày tạo</th>
                                         <th>Ngày sửa</th>
                                         <th>Action</th>
                                     </tr>
@@ -59,42 +57,7 @@
                         <!-- /.card-body -->
                         <div id="modal-all">
                         </div>
-                        <div class="modal fade" id="modal-add" style="overflow-y: auto;">
-                            <div class="modal-dialog modal-lg">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h4 class="modal-title">Thêm tin tức</b></h4>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-                                    <div class="modal-body">
 
-                                        <div class="form-group">
-                                            <label for="tin_tuc_new"><span style="color: red">*</span> Tin tức</label>
-                                            <input type="text" class="form-control" id="tin_tuc_new" value="" placeholder="Tin tức">
-                                        </div>
-                                        <div class="form-group" id="">
-                                            <label for="detail_new">Nội dung</label>
-                                            <textarea id="detail_new" rows="5"></textarea>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="attachFile">Attach file</label>
-                                            <div class="input-group">
-                                                <div class="custom-file">
-                                                    <input type="file" class="custom-file-input" id="attachFile">
-                                                    <label class="custom-file-label" for="attachFile">Choose file</label>
-                                                </div>
-                                                <div class="input-group-append">
-                                                    <span class="input-group-text">Upload</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <button class="btn btn-success" onclick="addItem()" id="addBtn">Thêm tin tức</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div><!-- /.container-fluid -->
@@ -108,7 +71,6 @@
 
         $(document).ready(function () {
             // Summernote
-            $('#detail_new').summernote()
             bsCustomFileInput.init();
             getItem()
 
@@ -117,7 +79,7 @@
         let dataApplication;
         function getItem() {
             $.ajax({
-                url: '/TinTuc/GetTinTuc',
+                url: '/VeChungToi/GetVeChungToi',
                 type: 'GET',
                 headers: {
                     'Authorization': 'Bearer ' + getCookie('esign_token')
@@ -141,7 +103,7 @@
 
         function search() {
             let search = document.getElementById("search");
-            let filteredData = dataApplication.filter(item => item.tin_tuc.includes(search.value));
+            let filteredData = dataApplication.filter(item => item.title.includes(search.value));
             setupPagination(filteredData)
         }
 
@@ -176,22 +138,20 @@
                 let urlList = data[0].file_name.split('.')
                 let extensionFile = urlList[urlList.length - 1]
                 tableBody += `<tr>
-                                    <td>${row.tin_tuc}</td>
+                                    <td>${row.title}</td>
                                     <td>${row.detail}</td>
                                     <td><img src="data:image/${extensionFile};base64, ${row.file_url}" alt="${row.file_name}" width="300" height="200"></td>
-                                    <td>${convertDate(row.create_at)}</td>
                                     <td>${convertDate(row.update_at)}</td>
                                     <td>
                                         <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#modal-${row.id}">Update</button>
-                                        <button type="button" class="btn btn-danger" onclick="deleteItem(${row.id})">Delete</button>
                                     </td>
                                 </tr>`;
 
-                htmlModal = ` <div class="modal fade" id="modal-${row.id}" style="overflow-y: auto;">
+                htmlModal = ` <div class="modal fade" id="modal-${row.id}">
                                     <div class="modal-dialog modal-lg">
                                         <div class="modal-content">
                                             <div class="modal-header">
-                                                    <h4 class="modal-title">Tin tức: <b>${row.tin_tuc}</b></h4>
+                                                    <h4 class="modal-title">Về chúng tôi</b></h4>
                                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                     <span aria-hidden="true">&times;</span>
                                                 </button>
@@ -199,8 +159,8 @@
                                             <div class="modal-body">
 
                                             <div class="form-group">
-                                                <label for="tin_tuc_${row.id}"><span style="color: red">*</span> Tin tức</label>
-                                                <input type="text" class="form-control" id="tin_tuc_${row.id}" value="${row.tin_tuc}" placeholder="Tin tức">
+                                                <label for="title_${row.id}"><span style="color: red">*</span> Tiêu đề</label>
+                                                <input type="text" class="form-control" id="title_${row.id}" value="${row.title}" placeholder="Tiêu đề">
                                             </div>
                                             <div class="form-group" id="">
                                                 <label for="detail_${row.id}">Nội dung</label>
@@ -268,13 +228,12 @@
         }
 
         function updateImage(id){
-            if($(`#tin_tuc_${id}`).val() == ''){
-                alert('Bạn cần nhập tin tức!')
+            if($(`#title_${id}`).val() == ''){
+                alert('Bạn cần nhập tiêu đề!')
                 return;
             }
             let fileUpload = document.getElementById("attachFileUpdate_"+ id);
             if (fileUpload.files.length != 0) {
-                console.log(1)
                 let file = new FormData();
                 file.append("file", fileUpload.files[0])
 
@@ -306,120 +265,20 @@
                 });
             }
             else{
-                console.log(2)
                 updateFile('', '', id)
             }
         }
         function updateFile(fileUrl, fileName, id){
             $.ajax({
-                url: '/TinTuc/UpdateFile',
+                url: '/VeChungToi/UpdateFile',
                 type: 'POST',
                 headers: {
                     'Authorization': 'Bearer ' + getCookie('esign_token')
                 },
                 data: {
                     id: id,
-                    tin_tuc: $(`#tin_tuc_${id}`).val(),
+                    title: $(`#title_${id}`).val(),
                     detail: $(`#detail_${id}`).val(),
-                    file_url: fileUrl,
-                    file_name: fileName,
-                },
-                success: function (res) {
-                    alert(res.message)
-                    window.location.reload()
-                },
-                error: function (err) {
-                    if (err.status == 401) {
-                        logout();
-                    }
-                    else {
-                        alert('An error occurred. ' + err.responseText);
-                    }
-                }
-            });
-        }
-
-        function deleteItem(id){
-            if (confirm('Bạn có chắc chắn muốn xóa tin tức này?')) {
-                $.ajax({
-                    url: '/TinTuc/DeleteTinTuc',
-                    type: 'POST',
-                    headers: {
-                        'Authorization': 'Bearer ' + getCookie('esign_token')
-                    },
-                    data: {
-                        id: id,
-                    },
-                    success: function (res) {
-                        alert(res.message)
-                        window.location.reload()
-
-                    },
-                    error: function (err) {
-                        if (err.status == 401) {
-                            logout();
-                        }
-                        else {
-                            alert('An error occurred. ' + err.responseText);
-                        }
-                    }
-                });
-            }
-        }
-
-        function addItem(){
-            if($('#tin_tuc').val() == ''){
-                alert('Bạn cần nhập tin tức!')
-                return;
-            }
-            let fileUpload = document.getElementById("attachFile");
-            if (fileUpload.files.length != 0) {
-                let file = new FormData();
-                file.append("file", fileUpload.files[0])
-
-                $.ajax({
-                    url: '/Banner/UploadImage',
-                    type: 'POST',
-                    headers: {
-                        'Authorization': 'Bearer ' + getCookie('esign_token')
-                    },
-                    data: file,
-                    contentType: false,
-                    processData: false,
-                    success: function (res) {
-                        if (res.statusCode == "FAIL") {
-                            alert(res.message)
-                        } else {
-                            uploadFile(res.data[0].fileUrl, res.data[0].fileName)
-                        }
-
-                    },
-                    error: function (err) {
-                        if (err.status == 401) {
-                            logout();
-                        }
-                        else {
-                            alert('An error occurred. ' + err.responseText);
-                        }
-                    }
-                });
-            }
-            else{
-                alert('Bạn cần thêm ảnh tin tức!')
-                return;
-            }
-        }
-
-        function uploadFile(fileUrl, fileName){
-            $.ajax({
-                url: '/TinTuc/UploadFile',
-                type: 'POST',
-                headers: {
-                    'Authorization': 'Bearer ' + getCookie('esign_token')
-                },
-                data: {
-                    tin_tuc: $('#tin_tuc_new').val(),
-                    detail: $('#detail_new').val(),
                     file_url: fileUrl,
                     file_name: fileName,
                 },

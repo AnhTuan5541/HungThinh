@@ -13,7 +13,8 @@
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="~/lib/plugins/fontawesome-free/css/all.min.css">
+    @* <link rel="stylesheet" href="~/lib/plugins/fontawesome-free/css/all.min.css"> *@
+    <link href="~/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
     <!-- Ionicons -->
     <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
     <!-- Tempusdominus Bootstrap 4 -->
@@ -69,7 +70,7 @@
                 <!-- Notifications Dropdown Menu -->
                 <li class="nav-item dropdown">
                     <a class="nav-link" data-toggle="dropdown" href="#">
-                        <i class="far fa-user"> <span id="userInfo"></span></i>
+                        <i class="fa-solid fa-user"> </i><span id="userInfo"></span>
                     </a>
                     <div class="dropdown-menu dropdown-menu-md dropdown-menu-right">
                         <a href="#" class="dropdown-item" onclick="logout()">
@@ -88,8 +89,8 @@
         <!-- Main Sidebar Container -->
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
             <!-- Brand Logo -->
-            <a href="/" class="brand-link">
-                <img src="~/lib/dist/img/amkor-logo.jpg" alt="Hưng Thịnh Logo" class="brand-image img-circle elevation-3"
+            <a href="/profile" class="brand-link">
+                <img src="~/assets/img/logo-mockup-3d.png" alt="Hưng Thịnh Logo" class="brand-image img-circle elevation-3"
                     style="opacity: .8">
                 <span class="brand-text font-weight-light">Hưng Thịnh</span>
             </a>
@@ -103,26 +104,26 @@
                         data-accordion="false">
                         <!-- Add icons to the links using the .nav-icon class
                         with font-awesome or any other icon font library -->
+                        <li class="nav-header">User</li>
                         <li class="nav-item">
-                            <a href="/" class="nav-link" id="nav-link-home">
-                                <i class="nav-icon fas fa-table"></i>
+                            <a href="/profile" class="nav-link" id="nav-link-profile">
+                                <i class="nav-icon fa-solid fa-user"></i>
                                 <p>
-                                    Home
+                                    Profile
                                 </p>
                             </a>
                         </li>
-                        <li class="nav-header">User</li>
                         <li class="nav-item">
                             <a href="/banner" class="nav-link" id="nav-link-banner">
-                                <i class="nav-icon fas fa-users"></i>
+                                <i class="nav-icon fa-solid fa-photo-film"></i>
                                 <p>
                                     Quản lý banner
                                 </p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="/linhvuc" class="nav-link" id="nav-link-linh-vuc">
-                                <i class="nav-icon fas fa-users"></i>
+                            <a href="/linhvuc" class="nav-link" id="nav-link-linhvuc">
+                                <i class="nav-icon fa-solid fa-clipboard-list"></i>
                                 <p>
                                     Quản lý lĩnh vực
                                 </p>
@@ -130,7 +131,7 @@
                         </li>
                         <li class="nav-item">
                             <a href="/project" class="nav-link" id="nav-link-project">
-                                <i class="nav-icon fas fa-users"></i>
+                                <i class="nav-icon fa-solid fa-rectangle-list"></i>
                                 <p>
                                     Quản lý dự án
                                 </p>
@@ -138,7 +139,7 @@
                         </li>
                         <li class="nav-item">
                             <a href="/nangluc" class="nav-link" id="nav-link-nangluc">
-                                <i class="nav-icon fas fa-users"></i>
+                                <i class="nav-icon fa-solid fa-users-between-lines"></i>
                                 <p>
                                     Quản lý năng lực
                                 </p>
@@ -146,7 +147,7 @@
                         </li>
                         <li class="nav-item">
                             <a href="/tintuc" class="nav-link" id="nav-link-tintuc">
-                                <i class="nav-icon fas fa-users"></i>
+                                <i class="nav-icon fa-solid fa-newspaper"></i>
                                 <p>
                                     Quản lý tin tức
                                 </p>
@@ -154,7 +155,7 @@
                         </li>
                         <li class="nav-item">
                             <a href="/lienhe" class="nav-link" id="nav-link-lienhe">
-                                <i class="nav-icon fas fa-users"></i>
+                                <i class="nav-icon fa-solid fa-address-card"></i>
                                 <p>
                                     Quản lý liên hệ
                                 </p>
@@ -162,24 +163,17 @@
                         </li>
                         <li class="nav-item">
                             <a href="/vechungtoi" class="nav-link" id="nav-link-vechungtoi">
-                                <i class="nav-icon fas fa-users"></i>
+                                <i class="nav-icon fa-solid fa-file-contract"></i>
                                 <p>
                                     Quản lý về chúng tôi
                                 </p>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a href="/profile" class="nav-link" id="nav-link-profile">
-                                <i class="nav-icon fas fa-users"></i>
-                                <p>
-                                    Profile
-                                </p>
-                            </a>
-                        </li>
+                        
                         <li class="nav-header">Admin</li>
                         <li class="nav-item">
                             <a href="/admin" class="nav-link" id="nav-link-admin">
-                                <i class="nav-icon far fa-calendar-alt"></i>
+                                <i class="nav-icon fa-solid fa-user-tie"></i>
                                 <p>
                                     Quản lý user
                                 </p>
@@ -187,7 +181,7 @@
                         </li>
                         <li class="nav-item">
                             <a href="/admin/role" class="nav-link" id="nav-link-admin-role">
-                                <i class="nav-icon far fa-calendar-alt"></i>
+                                <i class="nav-icon fa-solid fa-table-list"></i>
                                 <p>
                                     Quản lý phân quyền
                                 </p>
@@ -292,7 +286,28 @@
             let currentUrl = window.location.pathname;
             
             switch(currentUrl){
-                case "/profile": 
+                case "/banner": 
+                    $('#nav-link-banner').addClass('active');
+                    break;
+                case "/linhvuc":
+                    $('#nav-link-linhvuc').addClass('active');
+                    break;
+                case "/project":
+                    $('#nav-link-project').addClass('active');
+                    break;
+                case "/nangluc":
+                    $('#nav-link-nangluc').addClass('active');
+                    break;
+                case "/tintuc":
+                    $('#nav-link-tintuc').addClass('active');
+                    break;
+                case "/lienhe":
+                    $('#nav-link-lienhe').addClass('active');
+                    break;
+                case "/vechungtoi":
+                    $('#nav-link-vechungtoi').addClass('active');
+                    break;
+                case "/profile":
                     $('#nav-link-profile').addClass('active');
                     break;
                 case "/admin":

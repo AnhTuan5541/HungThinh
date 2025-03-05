@@ -44,13 +44,13 @@
 
             <nav id="navmenu" class="navmenu">
                 <ul>
-                    <li><a href="/" class="active">Home</a></li>
-                    <li><a href="/ve-chung-toi">Về chúng tôi</a></li>
-                    <li><a href="/linh-vuc-hoat-dong">Lĩnh vực hoạt động</a></li>
-                    <li><a href="/du-an">Dự án</a></li>
-                    <li><a href="/nang-luc">Năng lực</a></li>
-                    <li><a href="/tin-tuc">Tin Tức</a></li>
-                    <li><a href="/lien-he">Liên hệ</a></li>
+                    <li><a href="/" id="nav-front-home">Home</a></li>
+                    <li><a href="/ve-chung-toi" id="nav-front-ve-chung-toi">Về chúng tôi</a></li>
+                    <li><a href="/linh-vuc-hoat-dong" id="nav-front-linh-vuc-hoat-dong">Lĩnh vực hoạt động</a></li>
+                    <li><a href="/du-an" id="nav-front-du-an">Dự án</a></li>
+                    <li><a href="/nang-luc" id="nav-front-nang-luc">Năng lực</a></li>
+                    <li><a href="/tin-tuc" id="nav-front-tin-tuc">Tin Tức</a></li>
+                    <li><a href="/lien-he" id="nav-front-lien-he">Liên hệ</a></li>
                 </ul>
                 <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
             </nav>
@@ -165,6 +165,39 @@
     <!-- Main JS File -->
     <script src="~/assets/js/main.js"></script>
     <script>
+        $(function () {
+            let currentUrl = window.location.pathname;
+
+            switch(currentUrl){
+                case "/":
+                    $('#nav-front-home').addClass('active');
+                    break;
+                case "/ve-chung-toi":
+                    $('#nav-front-ve-chung-toi').addClass('active');
+                    break;
+                case "/linh-vuc-hoat-dong":
+                case "/linh-vuc/chi-tiet":
+                    $('#nav-front-linh-vuc-hoat-dong').addClass('active');
+                    break;
+                case "/du-an":
+                case "/du-an/chi-tiet":
+                    $('#nav-front-du-an').addClass('active');
+                    break;
+                case "/nang-luc":
+                    $('#nav-front-nang-luc').addClass('active');
+                    break;
+                case "/tin-tuc":
+                case "/tin-tuc/chi-tiet":
+                    $('#nav-front-tin-tuc').addClass('active');
+                    break;
+                case "/lien-he":
+                    $('#nav-front-lien-he').addClass('active');
+                    break;
+                default:
+                    break;
+            }
+        })
+
         function truncateString(str) {
             let maxLength = 200;
             if (str.length > maxLength) {

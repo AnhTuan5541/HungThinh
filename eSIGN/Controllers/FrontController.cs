@@ -20,32 +20,6 @@ namespace HungThinh.Controllers
             _connection = connection.Value;
         }
         [HttpGet]
-        public List<Dictionary<string, object>> GetTest()
-        {
-            string functionName = ControllerContext.ActionDescriptor.ControllerName + "/" + System.Reflection.MethodBase.GetCurrentMethod().Name;
-            string userid = "anonymous";
-            try
-            {
-                using var connection = new SqlConnection("Data Source=10.201.21.94,51133;Initial Catalog=VISODS;Integrated Security=True;User ID=vn\\vis_excel_user;Application Name=Microsoft Office 2016;Workstation ID=VNV1OFLTP00236;TrustServerCertificate=True");
-                using var command = new SqlCommand("SELECT * FROM dbo.FUNC_VISINV_RAWDIE_NEW()", connection);
-
-                // Thêm các tham số cho stored procedure (nếu cần)
-                //command.Parameters.AddWithValue("@role", role);
-
-                connection.Open();
-                var reader = command.ExecuteReader();
-                List<Dictionary<string, object>> data = CommonFunction.GetDataFromProcedure(reader);
-                connection.Close();
-
-                return data;
-            }
-            catch (Exception ex)
-            {
-                // Xử lý lỗi (ví dụ: log lỗi, trả về phản hồi lỗi)
-                return null;
-            }
-        }
-        [HttpGet]
         public IActionResult GetBanner()
         {
             string functionName = ControllerContext.ActionDescriptor.ControllerName + "/" + System.Reflection.MethodBase.GetCurrentMethod().Name;
@@ -347,6 +321,92 @@ namespace HungThinh.Controllers
             }
         }
         [HttpGet]
+        public IActionResult GetTop5TinTuc()
+        {
+            string functionName = ControllerContext.ActionDescriptor.ControllerName + "/" + System.Reflection.MethodBase.GetCurrentMethod().Name;
+            string userid = "anonymous";
+            try
+            {
+                using var connection = new SqlConnection(_connection.DefaultConnection);
+                using var command = new SqlCommand("HT_GetTop5TinTuc", connection) { CommandType = CommandType.StoredProcedure };
+
+                // Thêm các tham số cho stored procedure (nếu cần)
+                //command.Parameters.AddWithValue("@role", role);
+
+                connection.Open();
+                var reader = command.ExecuteReader();
+                List<Dictionary<string, object>> data = CommonFunction.GetDataFromProcedure(reader);
+                connection.Close();
+
+                string resultMessage = "Get top 5 tin tức successfully!";
+                CommonFunction.LogInfo(_connection.DefaultConnection, userid, resultMessage, CommonFunction.SUCCESS, functionName);
+                var response = new CommonResponse<Dictionary<string, object>>
+                {
+                    StatusCode = CommonFunction.SUCCESS,
+                    Message = resultMessage,
+                    Data = data,
+                    size = data.Count
+                };
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                // Xử lý lỗi (ví dụ: log lỗi, trả về phản hồi lỗi)
+                CommonFunction.LogInfo(_connection.DefaultConnection, userid, ex.Message, CommonFunction.ERROR, functionName);
+                var errorResponse = new CommonResponse<User>
+                {
+                    StatusCode = CommonFunction.ERROR,
+                    Message = ex.Message,
+                    Data = null,
+                    size = 0
+                };
+                return StatusCode(500, errorResponse);
+            }
+        }
+        [HttpGet]
+        public IActionResult GetTop5DuAn()
+        {
+            string functionName = ControllerContext.ActionDescriptor.ControllerName + "/" + System.Reflection.MethodBase.GetCurrentMethod().Name;
+            string userid = "anonymous";
+            try
+            {
+                using var connection = new SqlConnection(_connection.DefaultConnection);
+                using var command = new SqlCommand("HT_GetTop5Project", connection) { CommandType = CommandType.StoredProcedure };
+
+                // Thêm các tham số cho stored procedure (nếu cần)
+                //command.Parameters.AddWithValue("@role", role);
+
+                connection.Open();
+                var reader = command.ExecuteReader();
+                List<Dictionary<string, object>> data = CommonFunction.GetDataFromProcedure(reader);
+                connection.Close();
+
+                string resultMessage = "Get top 5 dự án successfully!";
+                CommonFunction.LogInfo(_connection.DefaultConnection, userid, resultMessage, CommonFunction.SUCCESS, functionName);
+                var response = new CommonResponse<Dictionary<string, object>>
+                {
+                    StatusCode = CommonFunction.SUCCESS,
+                    Message = resultMessage,
+                    Data = data,
+                    size = data.Count
+                };
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                // Xử lý lỗi (ví dụ: log lỗi, trả về phản hồi lỗi)
+                CommonFunction.LogInfo(_connection.DefaultConnection, userid, ex.Message, CommonFunction.ERROR, functionName);
+                var errorResponse = new CommonResponse<User>
+                {
+                    StatusCode = CommonFunction.ERROR,
+                    Message = ex.Message,
+                    Data = null,
+                    size = 0
+                };
+                return StatusCode(500, errorResponse);
+            }
+        }
+        [HttpGet]
         public IActionResult GetTinTucChiTiet(int id)
         {
             string functionName = ControllerContext.ActionDescriptor.ControllerName + "/" + System.Reflection.MethodBase.GetCurrentMethod().Name;
@@ -451,6 +511,49 @@ namespace HungThinh.Controllers
                 connection.Close();
 
                 string resultMessage = "Get về chúng tôi successfully!";
+                CommonFunction.LogInfo(_connection.DefaultConnection, userid, resultMessage, CommonFunction.SUCCESS, functionName);
+                var response = new CommonResponse<Dictionary<string, object>>
+                {
+                    StatusCode = CommonFunction.SUCCESS,
+                    Message = resultMessage,
+                    Data = data,
+                    size = data.Count
+                };
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                // Xử lý lỗi (ví dụ: log lỗi, trả về phản hồi lỗi)
+                CommonFunction.LogInfo(_connection.DefaultConnection, userid, ex.Message, CommonFunction.ERROR, functionName);
+                var errorResponse = new CommonResponse<User>
+                {
+                    StatusCode = CommonFunction.ERROR,
+                    Message = ex.Message,
+                    Data = null,
+                    size = 0
+                };
+                return StatusCode(500, errorResponse);
+            }
+        }
+        [HttpGet]
+        public IActionResult GetFooter()
+        {
+            string functionName = ControllerContext.ActionDescriptor.ControllerName + "/" + System.Reflection.MethodBase.GetCurrentMethod().Name;
+            string userid = "anonymous";
+            try
+            {
+                using var connection = new SqlConnection(_connection.DefaultConnection);
+                using var command = new SqlCommand("HT_GetFooter", connection) { CommandType = CommandType.StoredProcedure };
+
+                // Thêm các tham số cho stored procedure (nếu cần)
+                //command.Parameters.AddWithValue("@role", role);
+
+                connection.Open();
+                var reader = command.ExecuteReader();
+                List<Dictionary<string, object>> data = CommonFunction.GetDataFromProcedure(reader);
+                connection.Close();
+
+                string resultMessage = "Get footer successfully!";
                 CommonFunction.LogInfo(_connection.DefaultConnection, userid, resultMessage, CommonFunction.SUCCESS, functionName);
                 var response = new CommonResponse<Dictionary<string, object>>
                 {

@@ -39,7 +39,7 @@
             <a href="/" class="logo d-flex align-items-center">
                 <!-- Uncomment the line below if you also wish to use an image logo -->
                 <!-- <img src="assets/img/logo.png" alt=""> -->
-                <h1 class="sitename">Hưng Thịnh Construction</h1> <span>.</span>
+                <h1 class="sitename">Hưng Thịnh</h1> <span>.</span>
             </a>
 
             <nav id="navmenu" class="navmenu">
@@ -51,6 +51,7 @@
                     <li><a href="/nang-luc" id="nav-front-nang-luc">Năng lực</a></li>
                     <li><a href="/tin-tuc" id="nav-front-tin-tuc">Tin Tức</a></li>
                     <li><a href="/lien-he" id="nav-front-lien-he">Liên hệ</a></li>
+                    <li><a href="/admin/home" target="_blank">Admin</a></li>
                 </ul>
                 <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
             </nav>
@@ -66,78 +67,51 @@
             <div class="row gy-4">
                 <div class="col-lg-4 col-md-6 footer-about">
                     <a href="index.html" class="logo d-flex align-items-center">
-                        <span class="sitename">UpConstruction</span>
+                        <span class="sitename">Hưng Thịnh</span>
                     </a>
                     <div class="footer-contact pt-3">
-                        <p>A108 Adam Street</p>
-                        <p>New York, NY 535022</p>
-                        <p class="mt-3"><strong>Phone:</strong> <span>+1 5589 55488 55</span></p>
-                        <p><strong>Email:</strong> <span>info@example.com</span></p>
+                        <p><strong>Địa chỉ:</strong> <span id="footer_dia_chi"></span></p>
+                        <p class="mt-3"><strong>Điện thoại:</strong> <span id="footer_dien_thoai"></span></p>
+                        <p><strong>Email:</strong> <span id="footer_email"></span></p>
                     </div>
                     <div class="social-links d-flex mt-4">
-                        <a href=""><i class="bi bi-twitter-x"></i></a>
-                        <a href=""><i class="bi bi-facebook"></i></a>
-                        <a href=""><i class="bi bi-instagram"></i></a>
-                        <a href=""><i class="bi bi-linkedin"></i></a>
+                        <a href="" id="x"><i class="bi bi-twitter-x"></i></a>
+                        <a href="" id="facebook"><i class="bi bi-facebook"></i></a>
+                        <a href="" id="instagram"><i class="bi bi-instagram"></i></a>
+                        <a href="" id="linkedlin"><i class="bi bi-linkedin"></i></a>
                     </div>
                 </div>
 
                 <div class="col-lg-2 col-md-3 footer-links">
-                    <h4>Useful Links</h4>
+                    <h4>Thông tin</h4>
                     <ul>
-                        <li><a href="#">Home</a></li>
-                        <li><a href="#">About us</a></li>
-                        <li><a href="#">Services</a></li>
-                        <li><a href="#">Terms of service</a></li>
-                        <li><a href="#">Privacy policy</a></li>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/linh-vuc-hoat-dong">Lĩnh vực hoạt động</a></li>
+                        <li><a href="/du-an">Dự án</a></li>
+                        <li><a href="/nang-luc">Năng lực</a></li>
+                        <li><a href="/tin-tuc">Tin tức</a></li>
                     </ul>
                 </div>
 
                 <div class="col-lg-2 col-md-3 footer-links">
-                    <h4>Our Services</h4>
+                    <h4>Liên kết nhanh</h4>
                     <ul>
-                        <li><a href="#">Web Design</a></li>
-                        <li><a href="#">Web Development</a></li>
-                        <li><a href="#">Product Management</a></li>
-                        <li><a href="#">Marketing</a></li>
-                        <li><a href="#">Graphic Design</a></li>
+                        <li><a href="/ve-chung-toi">Về chúng tôi</a></li>
+                        <li><a href="/lien-he">Liên hệ</a></li>
                     </ul>
                 </div>
-
-                <div class="col-lg-2 col-md-3 footer-links">
-                    <h4>Hic solutasetp</h4>
-                    <ul>
-                        <li><a href="#">Molestiae accusamus iure</a></li>
-                        <li><a href="#">Excepturi dignissimos</a></li>
-                        <li><a href="#">Suscipit distinctio</a></li>
-                        <li><a href="#">Dilecta</a></li>
-                        <li><a href="#">Sit quas consectetur</a></li>
-                    </ul>
-                </div>
-
-                <div class="col-lg-2 col-md-3 footer-links">
-                    <h4>Nobis illum</h4>
-                    <ul>
-                        <li><a href="#">Ipsam</a></li>
-                        <li><a href="#">Laudantium dolorum</a></li>
-                        <li><a href="#">Dinera</a></li>
-                        <li><a href="#">Trodelas</a></li>
-                        <li><a href="#">Flexo</a></li>
-                    </ul>
-                </div>
-
             </div>
         </div>
 
         <div class="container copyright text-center mt-4">
-            <p>© <span>Copyright</span> <strong class="px-1 sitename">UpConstruction</strong> <span>All Rights Reserved</span></p>
-            <div class="credits">
+            <p>© <span>Copyright</span> <strong class="px-1 sitename">Hưng Thịnh</strong> <span>All Rights Reserved</span></p>
+            @* <div class="credits">
                 <!-- All the links in the footer should remain intact. -->
                 <!-- You can delete the links only if you've purchased the pro version. -->
                 <!-- Licensing information: https://bootstrapmade.com/license/ -->
                 <!-- Purchase the pro version with working PHP/AJAX contact form: [buy-url] -->
                 Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
-            </div>
+            </div> *@
         </div>
 
     </footer>
@@ -196,17 +170,52 @@
                 default:
                     break;
             }
+            getFooter()
+            getLienHeFooter()
         })
+        function getFooter(){
+            $.ajax({
+                url: '/Front/GetFooter',
+                type: 'GET',
+                headers: {
 
-        function truncateString(str) {
-            let maxLength = 200;
-            if (str.length > maxLength) {
-                return str.substring(0, maxLength) + '...';
-            }
-            return str;
+                },
+                data: { },
+                success: function (res) {
+                    let data = res.data
+
+                    $('#x').attr('href', data[0].x);
+                    $('#facebook').attr('href', data[0].facebook);
+                    $('#instagram').attr('href', data[0].instagram);
+                    $('#linkedlin').attr('href', data[0].linkedlin);
+                },
+                error: function (err) {
+                    alert('An error occurred. ' + err.responseText);
+                }
+            });
         }
-        function truncateString100(str) {
-            let maxLength = 100;
+        function getLienHeFooter(){
+            $.ajax({
+                url: '/Front/GetLienHe',
+                type: 'GET',
+                headers: {
+
+                },
+                data: { },
+                success: function (res) {
+                    let data = res.data
+                    let htmlData = ``
+
+                    $(`#footer_dia_chi`).html(data[0].dia_chi)
+                    $(`#footer_dien_thoai`).html(data[0].dien_thoai)
+                    $(`#footer_email`).html(data[0].email)
+                },
+                error: function (err) {
+                    alert('An error occurred. ' + err.responseText);
+                }
+            });
+        }
+        function truncateString(str, maxLength) {
             if (str.length > maxLength) {
                 return str.substring(0, maxLength) + '...';
             }

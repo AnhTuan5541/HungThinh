@@ -12,6 +12,9 @@ using Microsoft.AspNetCore.Mvc;
 using HungThinh.Response;
 using System.IO;
 using System.Globalization;
+using System.Drawing.Imaging;
+using System.Drawing;
+
 
 namespace HungThinh.Common
 {
@@ -127,45 +130,23 @@ namespace HungThinh.Common
                 return response;
             }
 
-            // Thu muc luu file tren server
-            //var uploadDirectory = Path.Combine("D:\\UploadFile", "eSign");
-            // Thu muc luu file tren local
-            //string uploadDirectory = Path.Combine("C:\\UploadFile", "eSign");
-            string uploadDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "upload");
-            if (!Directory.Exists(uploadDirectory))
-            {
-                Directory.CreateDirectory(uploadDirectory);
-            }
-            string uuid = Guid.NewGuid().ToString();
-            //string uniqueFileName = DateTime.Now.ToString("yyyyMMdd") + "_" + uuid + Path.GetExtension(file.FileName);
             string uniqueFileName = file.FileName;
-            string filePath = Path.Combine(uploadDirectory, uniqueFileName);
-
-            //Upload in folder
-            /*using (var stream = new FileStream(filePath, FileMode.Create))
-            {
-                await file.CopyToAsync(stream);
-            }
-            Dictionary<string, object> result = new Dictionary<string, object>();
-            result.Add("fileUrl", "/upload/" + uniqueFileName);
-            List<Dictionary<string, object>> fileUrl = new List<Dictionary<string, object>>();
-            fileUrl.Add(result);
-
-            response = new CommonResponse<Dictionary<string, object>>
-            {
-                StatusCode = CommonFunction.SUCCESS,
-                Message = "Upload file succsessfully.",
-                Data = fileUrl,
-                size = 0
-            };
-            return response;*/
 
             //Upload in db
             string base64String;
             using (var stream = new MemoryStream())
             {
                 await file.CopyToAsync(stream);
-                var fileBytes = stream.ToArray();
+                //var fileBytes = stream.ToArray();
+                //base64String = Convert.ToBase64String(fileBytes);
+                var image = Image.FromStream(stream);
+                var compressedStream = new MemoryStream();
+                var encoderParameters = new EncoderParameters(1);
+                encoderParameters.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, 40L); // Chất lượng nén (0-100)
+                var codec = ImageCodecInfo.GetImageDecoders().First(c => c.FormatID == ImageFormat.Jpeg.Guid);
+                image.Save(compressedStream, codec, encoderParameters);
+
+                var fileBytes = compressedStream.ToArray();
                 base64String = Convert.ToBase64String(fileBytes);
             }
 

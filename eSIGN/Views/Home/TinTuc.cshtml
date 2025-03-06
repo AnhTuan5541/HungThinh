@@ -84,7 +84,7 @@
                         let extensionFile = urlList[urlList.length - 1]
                         let file_url = data[i].file_url
 
-                        htmlData += `<div class="col-lg-6" data-aos="fade-up" data-aos-delay="100">
+                        htmlData += `<div class="col-lg-6" >
                                         <div class="card-item">
                                             <div class="row">
                                                 <div class="col-xl-5">
@@ -93,7 +93,7 @@
                                                 <div class="col-xl-7 d-flex align-items-center">
                                                     <div class="card-body">
                                                         <a href="/tin-tuc/chi-tiet?id=${data[i].id}"><h4 class="card-title">${data[i].tin_tuc}</h4></a>
-                                                        <p>${truncateString100(data[i].detail)}</p>
+                                                        <p>${truncateString(data[i].detail, 100)}</p>
                                                     </div>
                                                 </div>
                                             </div>

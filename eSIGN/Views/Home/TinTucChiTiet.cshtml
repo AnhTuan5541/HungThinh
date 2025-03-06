@@ -27,7 +27,7 @@
     <div class="container">
         <div class="row">
 
-            <div class="col-lg-12">
+            <div class="col-lg-8">
 
                 <!-- Blog Details Section -->
                 <section id="blog-details" class="blog-details section">
@@ -51,7 +51,19 @@
                 </section><!-- /Blog Details Section -->
 
             </div>
+            <div class="col-lg-4 sidebar">
 
+                <div class="widgets-container">
+                    <!-- Recent Posts Widget -->
+                    <div class="recent-posts-widget widget-item">
+
+                        <h3 class="widget-title">Bài viết gần đây</h3>
+
+                        <div id="top-5-tintuc"></div>
+                        
+                    </div><!--/Recent Posts Widget -->
+                </div>
+            </div>
         </div>
     </div>
 
@@ -62,10 +74,10 @@
         const id = url.searchParams.get('id');
         $(function () {
             getTinTucChiTiet(id)
+            getTop5TinTuc()
         })
 
         function getTinTucChiTiet(idItem){
-            console.log(idItem)
             $.ajax({
                 url: '/Front/GetTinTucChiTiet',
                 type: 'GET',
@@ -84,6 +96,41 @@
                     $(`#title`).html(data[0].tin_tuc)
                     $(`#detail`).html(data[0].detail)
                     $(`#image`).html(`<img src="data:image/${extensionFile};base64, ${file_url}" class="img-fluid" alt="">`)
+                },
+                error: function (err) {
+                    alert('An error occurred. ' + err.responseText);
+                }
+            });
+        }
+
+        function getTop5TinTuc(){
+            $.ajax({
+                url: '/Front/GetTop5TinTuc',
+                type: 'GET',
+                headers: {
+
+                },
+                data: {
+                    
+                },
+                success: function (res) {
+                    let data = res.data
+                    let htmlData = ''
+                    for(let i = 0; i < data.length; i++){
+                        let urlList = data[i].file_name.split('.')
+                        let extensionFile = urlList[urlList.length - 1]
+                        let file_url = data[i].file_url
+
+                        htmlData += `<div class="post-item">
+                                        <img src="data:image/${extensionFile};base64, ${file_url}" alt="" class="flex-shrink-0">
+                                        <div>
+                                            <h4><a href="/tin-tuc/chi-tiet?id=${data[i].id}">${data[i].tin_tuc}</a></h4>
+                                            <p>${truncateString(data[i].detail, 30)}</p>
+                                        </div>
+                                    </div>`
+                    }
+                    $(`#top-5-tintuc`).html(htmlData)
+                    
                 },
                 error: function (err) {
                     alert('An error occurred. ' + err.responseText);

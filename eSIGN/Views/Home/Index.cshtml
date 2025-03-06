@@ -204,28 +204,7 @@
             getNangLuc()
             getProject()
             getTinTuc()
-
-            getTest()
         })
-
-        function getTest(){
-            $.ajax({
-                url: '/Front/GetTest',
-                type: 'GET',
-                headers: {
-                    
-                },
-                data: {
-                    
-                },
-                success: function (res) {
-                    console.log(res)
-                },
-                error: function (err) {
-                    alert('An error occurred. ' + err.responseText);
-                }
-            });
-        }
 
         function getBanner(){
             $.ajax({
@@ -282,7 +261,7 @@
                                                 ${data[i].icon}
                                             </div>
                                             <h3>${data[i].linh_vuc}</h3>
-                                            <p>${truncateString(data[i].detail)}</p>
+                                            <p>${truncateString(data[i].detail, 200)}</p>
                                             <a href="/linh-vuc/chi-tiet?id=${data[i].id}" class="readmore stretched-link">Đọc thêm <i class="bi bi-arrow-right"></i></a>
                                         </div>
                                     </div>`
@@ -391,7 +370,7 @@
                                                 <div class="col-xl-7 d-flex align-items-center">
                                                     <div class="card-body">
                                                         <a href="/tin-tuc/chi-tiet?id=${data[i].id}"><h4 class="card-title">${data[i].tin_tuc}</h4></a>
-                                                        <p>${truncateString100(data[i].detail)}</p>
+                                                        <p>${truncateString(data[i].detail, 100)}</p>
                                                     </div>
                                                 </div>
                                             </div>

@@ -24,17 +24,16 @@ namespace HungThinh.Controllers
         {
             return View();
         }
-        [Route("admin/all-application")]
-        public IActionResult AllApplication()
-        {
-            return View();
-        }
         [Route("/profile")]
         public IActionResult Profile()
         {
             return View();
         }
         public IActionResult Role()
+        {
+            return View();
+        }
+        public IActionResult Home()
         {
             return View();
         }

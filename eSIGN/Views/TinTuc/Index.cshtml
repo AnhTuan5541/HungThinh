@@ -274,7 +274,6 @@
             }
             let fileUpload = document.getElementById("attachFileUpdate_"+ id);
             if (fileUpload.files.length != 0) {
-                console.log(1)
                 let file = new FormData();
                 file.append("file", fileUpload.files[0])
 
@@ -306,7 +305,6 @@
                 });
             }
             else{
-                console.log(2)
                 updateFile('', '', id)
             }
         }

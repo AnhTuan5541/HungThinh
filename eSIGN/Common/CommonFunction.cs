@@ -165,5 +165,69 @@ namespace HungThinh.Common
             };
             return response;
         }
+        public async static Task<CommonResponse<Dictionary<string, object>>> UploadFilePDF(IFormFile file)
+        {
+            var response = new CommonResponse<Dictionary<string, object>>
+            {
+                StatusCode = CommonFunction.SUCCESS,
+                Message = "Upload file succsessfully.",
+                Data = null,
+                size = 0
+            };
+
+            // Kiểm tra loại tệp
+            var allowedExtensions = new[] { ".pdf", ".docx", ".xlsx" };
+            var fileExtension = Path.GetExtension(file.FileName).ToLower();
+            if (!allowedExtensions.Contains(fileExtension))
+            {
+                response = new CommonResponse<Dictionary<string, object>>
+                {
+                    StatusCode = CommonFunction.FAIL,
+                    Message = "Loại file không hỗ trợ. Chỉ hỗ trợ các file .pdf, .docx, .xlsx",
+                    Data = null,
+                    size = 0
+                };
+                return response;
+            }
+
+            // Kiểm tra kích thước tệp (giới hạn 5MB)
+            //var maxFileSize = 10 * 1024 * 1024; // 5MB
+            //if (file.Length > maxFileSize)
+            //{
+            //    response = new CommonResponse<Dictionary<string, object>>
+            //    {
+            //        StatusCode = CommonFunction.FAIL,
+            //        Message = "Giới hạn dung lượng file là 10MB (10MB limit).",
+            //        Data = null,
+            //        size = 0
+            //    };
+            //    return response;
+            //}
+
+            string uniqueFileName = file.FileName;
+            //Upload in db
+            string base64String;
+            using (var stream = new MemoryStream())
+            {
+                await file.CopyToAsync(stream);
+                var fileBytes = stream.ToArray();
+                base64String = Convert.ToBase64String(fileBytes);
+            }
+
+            Dictionary<string, object> result = new Dictionary<string, object>();
+            result.Add("fileUrl", base64String);
+            result.Add("fileName", uniqueFileName);
+            List<Dictionary<string, object>> fileUrl = new List<Dictionary<string, object>>();
+            fileUrl.Add(result);
+
+            response = new CommonResponse<Dictionary<string, object>>
+            {
+                StatusCode = CommonFunction.SUCCESS,
+                Message = "Upload file succsessfully.",
+                Data = fileUrl,
+                size = 0
+            };
+            return response;
+        }
     }
 }

@@ -33,7 +33,7 @@
                         <!-- /.card-header -->
                         <div class="card-body">
                             <div>
-                                @* <button class="btn btn-success" data-toggle="modal" data-target="#modal-add" id="updateBtn" style="float:left">Thêm lĩnh vực</button> *@
+                                <span style="float:left">Quản lý năng lực</span>
                                 <input type="text" class="search" name="search" id="search" onkeyup="search()" placeholder="Search..." />
                             </div>
                             <table id="dataTable" class="table table-bordered table-hover">
@@ -87,7 +87,59 @@
                         </div> *@
                     </div>
                 </div>
-            </div><!-- /.container-fluid -->
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Hồ sơ năng lực</h3>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <table id="tbHoSoNangLuc" class="table table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Hồ sơ năng lực</th>
+                                        <th>File</th>
+                                        <th>Ngày sửa</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tBodyHoSoNangLuc">
+
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="modal fade" id="modal-update-ho-so">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Hồ sơ năng lực</b></h4>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="form-group">
+                                            <label for="attachFile">File hồ sơ năng lực</label>
+                                            <div class="input-group">
+                                                <div class="custom-file">
+                                                    <input type="file" class="custom-file-input" id="attachFile">
+                                                    <label class="custom-file-label" for="attachFile">Choose file</label>
+                                                </div>
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">Upload</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button class="btn btn-warning" onclick="updateHoSo()" id="updateBtnHoSo">Update</button>
+                                    </div>
+                                </div>
+                            </div>
+                        
+                    </div>
+                </div>
+            </div>
     </section>
     <!-- /.content -->
 </div>
@@ -97,7 +149,9 @@
         let nextPageIndex, previousPageIndex, pageCount, rowsPerPage = 10;
 
         $(document).ready(function () {
+            bsCustomFileInput.init();
             getItem()
+            getHoSoNangLuc()
 
         })
 
@@ -326,5 +380,69 @@
         //         }
         //     });
         // }
+        function getHoSoNangLuc() {
+            $.ajax({
+                url: '/NangLuc/GetHoSoNangLuc',
+                type: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + getCookie('esign_token')
+                },
+                data: { },
+                success: function (res) {
+                    let data = res.data
+                    let urlList = data[0].file_name.split('.')
+                    let extensionFile = urlList[urlList.length - 1]
+
+                    let base64 = 'data:text/plain;base64,' + data[0].file_url;
+
+                    let html = `<tr>
+                                    <td>${data[0].file_name}</td>
+                                    <td><a href="${base64}" download="${data[0].file_name}"><img src="/lib/dist/img/file.png" alt="" class="file-image" /></a></td>
+                                    <td>${convertDate(data[0].update_at)}</td>
+                                    <td><button type="button" class="btn btn-warning" data-toggle="modal" data-target="#modal-update-ho-so">Update</button></td>
+                                </tr>`
+                    $(`#tBodyHoSoNangLuc`).html(html)
+                },
+                error: function (err) {
+                    if (err.status == 401) {
+                        logout();
+                    }
+                    else {
+                        alert('An error occurred. ' + err.responseText);
+                    }
+                }
+            });
+        }
+
+        function updateHoSo(){
+            let fileUpload = document.getElementById("attachFile");
+            if (fileUpload.files.length != 0) {
+                let file = new FormData();
+                file.append("file", fileUpload.files[0])
+
+                $.ajax({
+                    url: '/NangLuc/UploadFile',
+                    type: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + getCookie('esign_token')
+                    },
+                    data: file,
+                    contentType: false,
+                    processData: false,
+                    success: function (res) {
+                        alert(res.message)
+                        window.location.reload()
+                    },
+                    error: function (err) {
+                        if (err.status == 401) {
+                            logout();
+                        }
+                        else {
+                            alert('An error occurred. ' + err.responseText);
+                        }
+                    }
+                });
+            }
+        }
     </script>
 }

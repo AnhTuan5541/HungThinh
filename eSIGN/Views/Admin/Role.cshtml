@@ -87,6 +87,9 @@
         let nextPageIndex, previousPageIndex, pageCount, rowsPerPage = 10;
 
         $(document).ready(function () {
+            if(localStorage.getItem("id_role") !== "1"){
+                window.location.replace("/admin/home")
+            }
             getApplication()
 
             //Initialize Select2 Elements

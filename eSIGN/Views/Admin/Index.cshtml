@@ -113,6 +113,9 @@
         let nextPageIndex, previousPageIndex, pageCount, rowsPerPage = 10;
 
         $(document).ready(function () {
+            if(localStorage.getItem("id_role") !== "1"){
+                window.location.replace("/admin/home")
+            }
             getRole()
 
             //Initialize Select2 Elements
@@ -342,6 +345,7 @@
                             fullname: $(`#fullname_${username}`).val(),
                             password: $(`#password_${username}`).val(),
                             id_role: $(`#role_${username}`).val() * 1,
+                            id_user_role: localStorage.getItem("id_role")
                         },
                         success: function (res) {
                             alert(res.message)
@@ -370,6 +374,7 @@
                         email: $(`#email_${username}`).val(),
                         fullname: $(`#fullname_${username}`).val(),
                         id_role: $(`#role_${username}`).val() * 1,
+                        id_user_role: localStorage.getItem("id_role")
                     },
                     success: function (res) {
                         alert(res.message)
@@ -398,6 +403,7 @@
                     },
                     data: {
                         username: username,
+                        id_user_role: localStorage.getItem("id_role")
                     },
                     success: function (res) {
                         alert(res.message)
@@ -446,6 +452,7 @@
                         fullname: $('#fullname_new').val(),
                         password: $('#password_new').val(),
                         id_role: $('#role_new').val() * 1,
+                        id_user_role: localStorage.getItem("id_role")
                     },
                     success: function (res) {
                         alert(res.message)

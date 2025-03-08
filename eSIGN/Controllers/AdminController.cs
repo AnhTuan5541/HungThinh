@@ -13,6 +13,7 @@ using OfficeOpenXml.Style;
 using System;
 using System.Drawing;
 using System.Linq;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HungThinh.Controllers
 {
@@ -120,10 +121,23 @@ namespace HungThinh.Controllers
         }
         [HttpPost]
         [Authorize]
-        public IActionResult UpdateUserInfo(string username, string email, string fullname, int id_role)
+        public IActionResult UpdateUserInfo(string username, string email, string fullname, int id_role, int id_user_role)
         {
             string functionName = ControllerContext.ActionDescriptor.ControllerName + "/" + System.Reflection.MethodBase.GetCurrentMethod().Name;
             string userid = User.FindFirstValue(ClaimTypes.Name);
+            if(id_user_role != 1)
+            {
+                string resultMessage = "Update user info fail!";
+                CommonFunction.LogInfo(_connection.DefaultConnection, userid, resultMessage, CommonFunction.FAIL, functionName);
+                var response = new CommonResponse<Dictionary<string, object>>
+                {
+                    StatusCode = CommonFunction.FAIL,
+                    Message = resultMessage,
+                    Data = null,
+                    size = 0
+                };
+                return Ok(response);
+            }
             try
             {
                 using var connection = new SqlConnection(_connection.DefaultConnection);
@@ -167,10 +181,23 @@ namespace HungThinh.Controllers
         }
         [HttpPost]
         [Authorize]
-        public IActionResult UpdateUserInfoWithPwd(string username, string email, string fullname, string password, int id_role)
+        public IActionResult UpdateUserInfoWithPwd(string username, string email, string fullname, string password, int id_role, int id_user_role)
         {
             string functionName = ControllerContext.ActionDescriptor.ControllerName + "/" + System.Reflection.MethodBase.GetCurrentMethod().Name;
             string userid = User.FindFirstValue(ClaimTypes.Name);
+            if (id_user_role != 1)
+            {
+                string resultMessage = "Update user info fail!";
+                CommonFunction.LogInfo(_connection.DefaultConnection, userid, resultMessage, CommonFunction.FAIL, functionName);
+                var response = new CommonResponse<Dictionary<string, object>>
+                {
+                    StatusCode = CommonFunction.FAIL,
+                    Message = resultMessage,
+                    Data = null,
+                    size = 0
+                };
+                return Ok(response);
+            }
             try
             {
                 string hashPwd = BCrypt.Net.BCrypt.HashPassword(password);
@@ -259,10 +286,23 @@ namespace HungThinh.Controllers
         }
         [HttpPost]
         [Authorize]
-        public IActionResult DeleteUser(string username)
+        public IActionResult DeleteUser(string username, int id_user_role)
         {
             string functionName = ControllerContext.ActionDescriptor.ControllerName + "/" + System.Reflection.MethodBase.GetCurrentMethod().Name;
             string userid = User.FindFirstValue(ClaimTypes.Name);
+            if (id_user_role != 1)
+            {
+                string resultMessage = "Delete user fail!";
+                CommonFunction.LogInfo(_connection.DefaultConnection, userid, resultMessage, CommonFunction.FAIL, functionName);
+                var response = new CommonResponse<Dictionary<string, object>>
+                {
+                    StatusCode = CommonFunction.FAIL,
+                    Message = resultMessage,
+                    Data = null,
+                    size = 0
+                };
+                return Ok(response);
+            }
             try
             {
                 using var connection = new SqlConnection(_connection.DefaultConnection);
@@ -347,10 +387,23 @@ namespace HungThinh.Controllers
         }
         [HttpPost]
         [Authorize]
-        public IActionResult AddUser(string username, string email, string fullname, string password, int id_role)
+        public IActionResult AddUser(string username, string email, string fullname, string password, int id_role, int id_user_role)
         {
             string functionName = ControllerContext.ActionDescriptor.ControllerName + "/" + System.Reflection.MethodBase.GetCurrentMethod().Name;
             string userid = User.FindFirstValue(ClaimTypes.Name);
+            if (id_user_role != 1)
+            {
+                string resultMessage = "Add user fail!";
+                CommonFunction.LogInfo(_connection.DefaultConnection, userid, resultMessage, CommonFunction.FAIL, functionName);
+                var response = new CommonResponse<Dictionary<string, object>>
+                {
+                    StatusCode = CommonFunction.FAIL,
+                    Message = resultMessage,
+                    Data = null,
+                    size = 0
+                };
+                return Ok(response);
+            }
             try
             {
                 using var connection = new SqlConnection(_connection.DefaultConnection);

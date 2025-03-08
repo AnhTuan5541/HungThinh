@@ -379,6 +379,10 @@
                     localStorage.setItem('id_role', res.data[0].id_role);
                     localStorage.setItem('role', res.data[0].role);
 
+                    if(res.data[0].id_role !== 1){
+                        document.getElementById('nav-link-admin').style.display = 'none';
+                        document.getElementById('nav-link-admin-role').style.display = 'none';
+                    }
                 },
                 error: function (err) {
                     if (err.status == 401) {

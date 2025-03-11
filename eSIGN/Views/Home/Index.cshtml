@@ -150,7 +150,9 @@
                             <p>Chúng tôi cung cấp các giải pháp xây dựng với chi phí hợp lý mà không làm giảm chất lượng. Chúng tôi luôn nỗ lực tối ưu hóa chi phí để mang lại giá trị tốt nhất cho khách hàng.</p>
                         </div>
                     </div><!-- End Icon Box -->
-
+                    <div class="icon-box d-flex position-relative" data-aos="fade-up" data-aos-delay="700">
+                        <button class="btn btn-primary" id="downloadHoSoNangLuc"></button>
+                    </div><!-- End Icon Box -->
                 </div>
             </div>
 
@@ -202,6 +204,7 @@
             getBanner()
             getLinhVuc()
             getNangLuc()
+            getHoSoNangLuc()
             getProject()
             getTinTuc()
         })
@@ -293,6 +296,28 @@
 
                     }
                     //$(`#nang-luc-inner`).html(htmlData)
+                },
+                error: function (err) {
+                    alert('An error occurred. ' + err.responseText);
+                }
+            });
+        }
+        function getHoSoNangLuc(){
+            $.ajax({
+                url: '/Front/GetHoSoNangLuc',
+                type: 'GET',
+                headers: {
+
+                },
+                data: { },
+                success: function (res) {
+                    let data = res.data
+                    let urlList = data[0].file_name.split('.')
+                    let extensionFile = urlList[urlList.length - 1]
+
+                    let base64 = 'data:text/plain;base64,' + data[0].file_url;
+
+                    $(`#downloadHoSoNangLuc`).html(`<a href="${base64}" download="${data[0].file_name}" style="color: #fff">Tải hồ sơ năng lực</a>`)
                 },
                 error: function (err) {
                     alert('An error occurred. ' + err.responseText);

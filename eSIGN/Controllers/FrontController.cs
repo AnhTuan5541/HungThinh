@@ -192,6 +192,49 @@ namespace HungThinh.Controllers
             }
         }
         [HttpGet]
+        public IActionResult GetHoSoNangLuc()
+        {
+            string functionName = ControllerContext.ActionDescriptor.ControllerName + "/" + System.Reflection.MethodBase.GetCurrentMethod().Name;
+            string userid = "anonymous";
+            try
+            {
+                using var connection = new SqlConnection(_connection.DefaultConnection);
+                using var command = new SqlCommand("HT_GetHoSoNangLuc", connection) { CommandType = CommandType.StoredProcedure };
+
+                // Thêm các tham số cho stored procedure (nếu cần)
+                //command.Parameters.AddWithValue("@role", role);
+
+                connection.Open();
+                var reader = command.ExecuteReader();
+                List<Dictionary<string, object>> data = CommonFunction.GetDataFromProcedure(reader);
+                connection.Close();
+
+                string resultMessage = "Get hồ sơ năng lực successfully!";
+                CommonFunction.LogInfo(_connection.DefaultConnection, userid, resultMessage, CommonFunction.SUCCESS, functionName);
+                var response = new CommonResponse<Dictionary<string, object>>
+                {
+                    StatusCode = CommonFunction.SUCCESS,
+                    Message = resultMessage,
+                    Data = data,
+                    size = data.Count
+                };
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                // Xử lý lỗi (ví dụ: log lỗi, trả về phản hồi lỗi)
+                CommonFunction.LogInfo(_connection.DefaultConnection, userid, ex.Message, CommonFunction.ERROR, functionName);
+                var errorResponse = new CommonResponse<User>
+                {
+                    StatusCode = CommonFunction.ERROR,
+                    Message = ex.Message,
+                    Data = null,
+                    size = 0
+                };
+                return StatusCode(500, errorResponse);
+            }
+        }
+        [HttpGet]
         public IActionResult GetProject()
         {
             string functionName = ControllerContext.ActionDescriptor.ControllerName + "/" + System.Reflection.MethodBase.GetCurrentMethod().Name;

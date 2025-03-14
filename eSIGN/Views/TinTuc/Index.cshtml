@@ -22,7 +22,7 @@
     </div>
     <!-- /.content-header -->
     <!-- Main content -->
-    <section class="content">
+    <section class="content" id="content">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
@@ -116,6 +116,9 @@
 
         let dataApplication;
         function getItem() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('content').classList.add('opacity-content')
+
             $.ajax({
                 url: '/TinTuc/GetTinTuc',
                 type: 'GET',
@@ -135,6 +138,10 @@
                     else {
                         alert('An error occurred. ' + err.responseText);
                     }
+                },
+                complete: function () {
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('content').classList.remove('opacity-content')
                 }
             });
         }

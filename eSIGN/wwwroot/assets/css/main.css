@@ -604,6 +604,16 @@ h6 {
   animation: animate-preloader 1.5s linear infinite;
 }
 
+@keyframes animate-preloader {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
 #preloader1 {
     position: fixed;
     inset: 0;
@@ -626,15 +636,6 @@ h6 {
     animation: animate-preloader1 1.5s linear infinite;
 }
 
-@keyframes animate-preloader {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  100% {
-    transform: rotate(360deg);
-  }
-}
 @keyframes animate-preloader1 {
     0% {
         transform: rotate(0deg);

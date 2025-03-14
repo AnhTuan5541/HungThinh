@@ -78,6 +78,7 @@
         })
 
         function getTinTucChiTiet(idItem){
+            $('#preloader1').show();
             $.ajax({
                 url: '/Front/GetTinTucChiTiet',
                 type: 'GET',
@@ -99,6 +100,9 @@
                 },
                 error: function (err) {
                     alert('An error occurred. ' + err.responseText);
+                },
+                complete: function () {
+                    $('#preloader1').hide();
                 }
             });
         }

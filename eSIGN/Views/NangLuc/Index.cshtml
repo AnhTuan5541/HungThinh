@@ -92,6 +92,60 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
+                            <h3 class="card-title">Tại sao nên chọn chúng tôi</h3>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <table id="dataTableTaiSaoNenChon" class="table table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Ảnh</th>
+                                        <th>Nội dung</th>
+                                        <th>Ngày sửa</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tBodyTaiSaoNenChon">
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- /.card-body -->
+                        <div id="modal-tai-sao-nen-chon">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Tiêu chí</h3>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <table id="dataTableTaiSaoNenChonContent" class="table table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Tiêu chí</th>
+                                        <th>Nội dung</th>
+                                        <th>Ngày sửa</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tBodyTaiSaoNenChonContent">
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- /.card-body -->
+                        <div id="modal-tai-sao-nen-chon-content">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
                             <h3 class="card-title">Hồ sơ năng lực</h3>
                         </div>
                         <!-- /.card-header -->
@@ -151,6 +205,8 @@
         $(document).ready(function () {
             bsCustomFileInput.init();
             getItem()
+            getTaiSaoNenChon()
+            getTaiSaoNenChonContent()
             getHoSoNangLuc()
 
         })
@@ -290,6 +346,143 @@
             renderTable(dataApplication, nextPageIndex, rowsPerPage)
         }
 
+        function getTaiSaoNenChon() {
+            $.ajax({
+                url: '/NangLuc/GetNangLucTaiSaoNenChon',
+                type: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + getCookie('esign_token')
+                },
+                data: { },
+                success: function (res) {
+                    let data = res.data
+                    let tableBody = '';
+                    data.forEach(row => {
+                        let urlList = row.file_name.split('.')
+                        let extensionFile = urlList[urlList.length - 1]
+                        tableBody += `<tr>
+                                            <td><img src="data:image/${extensionFile};base64, ${row.file_url}" alt="${row.file_name}" width="300" height="200"></td>
+                                            <td>${row.detail}</td>
+                                            <td>${convertDate(row.update_at)}</td>
+                                            <td>
+                                                <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#modal-tai-sao-nen-chon-${row.id}">Update</button>
+                                        
+                                            </td>
+                                        </tr>`;
+
+                        htmlModal = ` <div class="modal fade" id="modal-tai-sao-nen-chon-${row.id}">
+                                            <div class="modal-dialog modal-lg">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                            <h4 class="modal-title">Tại sao nên chọn chúng tôi</b></h4>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+
+                                                    <div class="form-group">
+                                                        <label for="tai_sao_nen_chon_detail_${row.id}">Nội dung</label>
+                                                        <input type="text" class="form-control" id="tai_sao_nen_chon_detail_${row.id}" value="${row.detail}" >
+                                                    </div>
+                                                    <div class="form-group">
+                                                    <label for="attachFileUpdate_${row.id}">Attach file</label>
+                                                        <div class="input-group">
+                                                            <div class="custom-file">
+                                                                <input type="file" class="custom-file-input" id="attachFileUpdate_${row.id}">
+                                                                <label class="custom-file-label" for="attachFileUpdate_${row.id}">Choose file</label>
+                                                            </div>
+                                                            <div class="input-group-append">
+                                                                <span class="input-group-text">Upload</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <button class="btn btn-warning" onclick="updateTaiSaoNenChon(${row.id})" >Update</button>
+                                                </div>
+                                            </div>
+                                        </div>`;
+
+                        $('#modal-tai-sao-nen-chon').append(htmlModal)
+                        bsCustomFileInput.init();
+                    });
+
+                    $('#tBodyTaiSaoNenChon').html(tableBody);
+
+                },
+                error: function (err) {
+                    if (err.status == 401) {
+                        logout();
+                    }
+                    else {
+                        alert('An error occurred. ' + err.responseText);
+                    }
+                }
+            });
+        }
+
+        function getTaiSaoNenChonContent() {
+            $.ajax({
+                url: '/NangLuc/GetNangLucTaiSaoNenChonContent',
+                type: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + getCookie('esign_token')
+                },
+                data: { },
+                success: function (res) {
+                    let data = res.data
+                    let tableBody = '';
+                    data.forEach(row => {
+                        tableBody += `<tr>
+                                            <td>${row.title}</td>
+                                            <td>${row.detail}</td>
+                                            <td>${convertDate(row.update_at)}</td>
+                                            <td>
+                                                <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#modal-tai-sao-nen-chon-content-${row.id}">Update</button>
+
+                                            </td>
+                                        </tr>`;
+
+                        htmlModal = ` <div class="modal fade" id="modal-tai-sao-nen-chon-content-${row.id}">
+                                            <div class="modal-dialog modal-lg">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                            <h4 class="modal-title">Tiêu chí</b></h4>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+
+                                                    <div class="form-group">
+                                                        <label for="tai_sao_nen_chon_content_title_${row.id}">Tiêu chí</label>
+                                                        <input type="text" class="form-control" id="tai_sao_nen_chon_content_title_${row.id}" value="${row.title}" >
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="tai_sao_nen_chon_content_detail_${row.id}">Nội dung</label>
+                                                        <input type="text" class="form-control" id="tai_sao_nen_chon_content_detail_${row.id}" value="${row.detail}" >
+                                                    </div>
+                                                    <button class="btn btn-warning" onclick="updateTaiSaoNenChonContent(${row.id})" >Update</button>
+                                                </div>
+                                            </div>
+                                        </div>`;
+
+                        $('#modal-tai-sao-nen-chon-content').append(htmlModal)
+                    });
+
+                    $('#tBodyTaiSaoNenChonContent').html(tableBody);
+
+                },
+                error: function (err) {
+                    if (err.status == 401) {
+                        logout();
+                    }
+                    else {
+                        alert('An error occurred. ' + err.responseText);
+                    }
+                }
+            });
+        }
+
         function update(id){
             if($(`#nang_luc_${id}`).val() == ''){
                 alert('Bạn cần nhập năng lực!')
@@ -380,6 +573,97 @@
         //         }
         //     });
         // }
+        function updateTaiSaoNenChon(id){
+            var fileUpload = document.getElementById("attachFileUpdate_"+ id);
+            if (fileUpload.files.length != 0) {
+                let file = new FormData();
+                file.append("file", fileUpload.files[0])
+
+                $.ajax({
+                    url: '/Banner/UploadImage',
+                    type: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + getCookie('esign_token')
+                    },
+                    data: file,
+                    contentType: false,
+                    processData: false,
+                    success: function (res) {
+                        if (res.statusCode == "FAIL") {
+                            alert(res.message)
+                        } else {
+                            updateTSNenChon(res.data[0].fileUrl, res.data[0].fileName, id)
+                        }
+
+                    },
+                    error: function (err) {
+                        if (err.status == 401) {
+                            logout();
+                        }
+                        else {
+                            alert('An error occurred. ' + err.responseText);
+                        }
+                    }
+                });
+            }
+            else{
+                updateFile('', '', id)
+            }
+        }
+        function updateTSNenChon(fileUrl, fileName, id){
+            $.ajax({
+                url: '/NangLuc/UpdateFileTaiSaoNenChon',
+                type: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + getCookie('esign_token')
+                },
+                data: {
+                    id: id,
+                    detail: $(`#tai_sao_nen_chon_detail_${id}`).val(),
+                    file_url: fileUrl,
+                    file_name: fileName,
+                },
+                success: function (res) {
+                    alert(res.message)
+                    window.location.reload()
+                },
+                error: function (err) {
+                    if (err.status == 401) {
+                        logout();
+                    }
+                    else {
+                        alert('An error occurred. ' + err.responseText);
+                    }
+                }
+            });
+        }
+        function updateTaiSaoNenChonContent(id){
+            $.ajax({
+                url: '/NangLuc/UpdateNangLucTaiSaoNenChonContent',
+                type: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + getCookie('esign_token')
+                },
+                data: {
+                    id: id,
+                    title: $(`#tai_sao_nen_chon_content_title_${id}`).val(),
+                    detail: $(`#tai_sao_nen_chon_content_detail_${id}`).val(),
+                },
+                success: function (res) {
+                    alert(res.message)
+                    window.location.reload()
+                },
+                error: function (err) {
+                    if (err.status == 401) {
+                        logout();
+                    }
+                    else {
+                        alert('An error occurred. ' + err.responseText);
+                    }
+                }
+            });
+        }
+
         function getHoSoNangLuc() {
             $.ajax({
                 url: '/NangLuc/GetHoSoNangLuc',

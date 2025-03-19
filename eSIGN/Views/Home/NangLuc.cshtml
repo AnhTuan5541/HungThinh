@@ -77,43 +77,16 @@
         <div class="container">
 
             <div class="row justify-content-around gy-4">
-                <div class="features-image col-lg-6" data-aos="fade-up" data-aos-delay="100"><img src="~/assets/img/alt-services.jpg" alt=""></div>
+                <div class="features-image col-lg-6" data-aos="fade-up" data-aos-delay="100" id="imgTaiSaoNenChon"></div>
 
                 <div class="col-lg-5 d-flex flex-column justify-content-center" data-aos="fade-up" data-aos-delay="200">
                     <h3>TẠI SAO NÊN CHỌN CHÚNG TÔI</h3>
-                    <p>Chúng tôi cam kết mang đến cho bạn những giải pháp xây dựng chất lượng cao, dịch vụ tận tâm và giá cả cạnh tranh, đảm bảo sự hài lòng và bền vững cho mọi công trình.</p>
+                    <p id="detailTaiSaoNenChon"></p>
 
-                    <div class="icon-box d-flex position-relative" data-aos="fade-up" data-aos-delay="300">
-                        <i class="bi bi-easel flex-shrink-0"></i>
-                        <div>
-                            <h4><a href="javascript:void(0);" class="stretched-link">Chất lượng và độ bền</a></h4>
-                            <p>Chúng tôi cam kết sử dụng các vật liệu xây dựng chất lượng cao và áp dụng các tiêu chuẩn kỹ thuật tiên tiến nhất để đảm bảo công trình của bạn không chỉ đẹp mà còn bền vững theo thời gian.</p>
-                        </div>
+                    <div id="taiSaoNenChonContent">
+                        
                     </div><!-- End Icon Box -->
 
-                    <div class="icon-box d-flex position-relative" data-aos="fade-up" data-aos-delay="400">
-                        <i class="bi bi-patch-check flex-shrink-0"></i>
-                        <div>
-                            <h4><a href="javascript:void(0);" class="stretched-link">Kinh nghiệm và chuyên môn</a></h4>
-                            <p>Với nhiều năm kinh nghiệm trong ngành xây dựng, đội ngũ kỹ sư và công nhân của chúng tôi có chuyên môn cao và đã hoàn thành nhiều dự án thành công, từ nhà ở dân dụng đến các công trình công nghiệp lớn.</p>
-                        </div>
-                    </div><!-- End Icon Box -->
-
-                    <div class="icon-box d-flex position-relative" data-aos="fade-up" data-aos-delay="500">
-                        <i class="bi bi-brightness-high flex-shrink-0"></i>
-                        <div>
-                            <h4><a href="javascript:void(0);" class="stretched-link">Dịch vụ khách hàng tận tâm</a></h4>
-                            <p>Chúng tôi luôn đặt khách hàng lên hàng đầu, lắng nghe và đáp ứng mọi yêu cầu của bạn. Đội ngũ hỗ trợ khách hàng của chúng tôi luôn sẵn sàng giải đáp mọi thắc mắc và đảm bảo bạn hài lòng với dịch vụ của chúng tôi.</p>
-                        </div>
-                    </div><!-- End Icon Box -->
-
-                    <div class="icon-box d-flex position-relative" data-aos="fade-up" data-aos-delay="600">
-                        <i class="bi bi-brightness-high flex-shrink-0"></i>
-                        <div>
-                            <h4><a href="javascript:void(0);">Giá cả cạnh tranh</a></h4>
-                            <p>Chúng tôi cung cấp các giải pháp xây dựng với chi phí hợp lý mà không làm giảm chất lượng. Chúng tôi luôn nỗ lực tối ưu hóa chi phí để mang lại giá trị tốt nhất cho khách hàng.</p>
-                        </div>
-                    </div><!-- End Icon Box -->
                     <div class="icon-box d-flex position-relative" data-aos="fade-up" data-aos-delay="700">
                         <button class="btn btn-primary" id="downloadHoSoNangLuc"></button>
                     </div><!-- End Icon Box -->
@@ -131,6 +104,8 @@
     <script>
         $(function () {
             getNangLuc()
+            getTaiSaoNenChon()
+            getTaiSaoNenChonContent()
             getHoSoNangLuc()
         })
 
@@ -153,6 +128,56 @@
 
                     }
                     //$(`#nang-luc-inner`).html(htmlData)
+                },
+                error: function (err) {
+                    alert('An error occurred. ' + err.responseText);
+                }
+            });
+        }
+
+        function getTaiSaoNenChon(){
+            $.ajax({
+                url: '/Front/GetNangLucTaiSaoNenChon',
+                type: 'GET',
+                headers: {
+
+                },
+                data: { },
+                success: function (res) {
+                    let data = res.data
+                    let urlList = data[0].file_name.split('.')
+                    let extensionFile = urlList[urlList.length - 1]
+                    let file_url = data[0].file_url
+                    $(`#imgTaiSaoNenChon`).html(`<img src="data:image/${extensionFile};base64, ${file_url}" alt="">`)
+                    $(`#detailTaiSaoNenChon`).html(data[0].detail)
+                },
+                error: function (err) {
+                    alert('An error occurred. ' + err.responseText);
+                }
+            });
+        }
+
+        function getTaiSaoNenChonContent(){
+            $.ajax({
+                url: '/Front/GetNangLucTaiSaoNenChonContent',
+                type: 'GET',
+                headers: {
+
+                },
+                data: { },
+                success: function (res) {
+                    let data = res.data
+                    let html = ``
+                    for(let i = 0; i < data.length; i++){
+                        html += `<div class="icon-box d-flex position-relative" data-aos="fade-up" data-aos-delay="300">
+                                    <i class="bi bi-patch-check flex-shrink-0"></i>
+                                    <div>
+                                        <h4><a href="javascript:void(0);" class="stretched-link">${data[i].title}</a></h4>
+                                        <p>${data[i].detail}</p>
+                                    </div>
+                                </div>`
+                    }
+                    $(`#taiSaoNenChonContent`).html(html)
                 },
                 error: function (err) {
                     alert('An error occurred. ' + err.responseText);

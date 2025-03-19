@@ -180,7 +180,7 @@
             let tableBody = '';
 
             paginatedData.forEach(row => {
-                let urlList = data[0].file_name.split('.')
+                let urlList = row.file_name.split('.')
                 let extensionFile = urlList[urlList.length - 1]
                 tableBody += `<tr>
                                     <td>${row.tin_tuc}</td>

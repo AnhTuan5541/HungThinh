@@ -81,7 +81,7 @@
                     let data = res.data
                     let htmlData = ``
                     for(let i = 0; i < data.length; i++){
-                        let urlList = data[0].file_name.split('.')
+                        let urlList = data[i].file_name.split('.')
                         let extensionFile = urlList[urlList.length - 1]
                         let file_url = data[i].file_url
 

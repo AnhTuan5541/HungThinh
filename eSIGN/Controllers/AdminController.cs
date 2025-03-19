@@ -209,6 +209,7 @@ namespace HungThinh.Controllers
                 command.Parameters.AddWithValue("@email", email == null ? "" : email);
                 command.Parameters.AddWithValue("@fullname", fullname == null ? "" : fullname);
                 command.Parameters.AddWithValue("@password", hashPwd);
+                command.Parameters.AddWithValue("@id_role", id_role);
 
                 connection.Open();
                 var reader = command.ExecuteReader();

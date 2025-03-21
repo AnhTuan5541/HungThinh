@@ -96,7 +96,7 @@
 
                     $(`#title`).html(data[0].tin_tuc)
                     $(`#detail`).html(data[0].detail)
-                    $(`#image`).html(`<img src="data:image/${extensionFile};base64, ${file_url}" class="img-fluid" alt="">`)
+                    $(`#image`).html(`<img src="${file_url}" class="img-fluid" alt="">`)
                 },
                 error: function (err) {
                     alert('An error occurred. ' + err.responseText);
@@ -126,7 +126,7 @@
                         let file_url = data[i].file_url
 
                         htmlData += `<div class="post-item">
-                                        <img src="data:image/${extensionFile};base64, ${file_url}" alt="" class="flex-shrink-0">
+                                        <img src="${file_url}" alt="" class="flex-shrink-0">
                                         <div>
                                             <h4><a href="/tin-tuc/chi-tiet?id=${data[i].id}">${data[i].tin_tuc}</a></h4>
                                             <p>${truncateString(data[i].detail, 30)}</p>

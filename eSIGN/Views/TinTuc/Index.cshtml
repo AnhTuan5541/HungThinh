@@ -185,7 +185,7 @@
                 tableBody += `<tr>
                                     <td>${row.tin_tuc}</td>
                                     <td>${row.detail}</td>
-                                    <td><img src="data:image/${extensionFile};base64, ${row.file_url}" alt="${row.file_name}" width="300" height="200"></td>
+                                    <td><img src="${row.file_url}" alt="${row.file_name}" width="300" height="200"></td>
                                     <td>${convertDate(row.create_at)}</td>
                                     <td>${convertDate(row.update_at)}</td>
                                     <td>

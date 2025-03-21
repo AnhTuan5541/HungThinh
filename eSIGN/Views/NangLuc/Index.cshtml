@@ -57,34 +57,6 @@
                         <!-- /.card-body -->
                         <div id="modal-all">
                         </div>
-                        @* <div class="modal fade" id="modal-add">
-                            <div class="modal-dialog modal-lg">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h4 class="modal-title">Thêm lĩnh vực</b></h4>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-                                    <div class="modal-body">
-
-                                        <div class="form-group">
-                                            <label for="linh_vuc_new"><span style="color: red">*</span> Lĩnh vực</label>
-                                            <input type="text" class="form-control" id="linh_vuc_new" value="" placeholder="Lĩnh vực">
-                                        </div>
-                                        <div class="form-group" id="">
-                                            <label for="detail_new">Nội dung</label>
-                                            <textarea id="detail_new" rows="5"></textarea>
-                                        </div>
-                                        <div class="form-group" id="">
-                                            <label for="icon_new">Icon</label>
-                                            <input type="text" class="form-control" id="icon_new" value="" placeholder="Icon">
-                                        </div>
-                                        <button class="btn btn-success" onclick="addItem()" id="addBtn">Thêm lĩnh vực</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div> *@
                     </div>
                 </div>
             </div>
@@ -361,7 +333,7 @@
                         let urlList = row.file_name.split('.')
                         let extensionFile = urlList[urlList.length - 1]
                         tableBody += `<tr>
-                                            <td><img src="data:image/${extensionFile};base64, ${row.file_url}" alt="${row.file_name}" width="300" height="200"></td>
+                                            <td><img src="${row.file_url}" alt="${row.file_name}" width="300" height="200"></td>
                                             <td>${row.detail}</td>
                                             <td>${convertDate(row.update_at)}</td>
                                             <td>
@@ -681,7 +653,7 @@
 
                     let html = `<tr>
                                     <td>${data[0].file_name}</td>
-                                    <td><a href="${base64}" download="${data[0].file_name}"><img src="/lib/dist/img/file.png" alt="" class="file-image" /></a></td>
+                                    <td><a href="${data[0].file_url}" download="${data[0].file_name}"><img src="/lib/dist/img/file.png" alt="" class="file-image" /></a></td>
                                     <td>${convertDate(data[0].update_at)}</td>
                                     <td><button type="button" class="btn btn-warning" data-toggle="modal" data-target="#modal-update-ho-so">Update</button></td>
                                 </tr>`

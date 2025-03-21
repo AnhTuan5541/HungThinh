@@ -80,7 +80,7 @@
 
                     $(`#title`).html(data[0].title)
                     $(`#detail`).html(data[0].detail)
-                    $(`#image`).html(`<img src="data:image/${extensionFile};base64, ${file_url}" class="img-fluid" alt="">`)
+                    $(`#image`).html(`<img src="${file_url}" class="img-fluid" alt="">`)
                 },
                 error: function (err) {
                     alert('An error occurred. ' + err.responseText);

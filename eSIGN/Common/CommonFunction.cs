@@ -91,12 +91,86 @@ namespace HungThinh.Common
             var reader = command.ExecuteReader();
         }
 
+        //public async static Task<CommonResponse<Dictionary<string, object>>> UploadFile(IFormFile file)
+        //{
+        //    var response = new CommonResponse<Dictionary<string, object>>
+        //    {
+        //        StatusCode = CommonFunction.SUCCESS,
+        //        Message = "Upload file succsessfully.",
+        //        Data = null,
+        //        size = 0
+        //    };
+
+        //    // Kiểm tra loại tệp
+        //    var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
+        //    var fileExtension = Path.GetExtension(file.FileName).ToLower();
+        //    if (!allowedExtensions.Contains(fileExtension))
+        //    {
+        //        response = new CommonResponse<Dictionary<string, object>>
+        //        {
+        //            StatusCode = CommonFunction.FAIL,
+        //            Message = "Loại file không hỗ trợ. Chỉ hỗ trợ các file .jpg, .jpeg, .png",
+        //            Data = null,
+        //            size = 0
+        //        };
+        //        return response;
+        //    }
+
+        //    // Kiểm tra kích thước tệp (giới hạn 5MB)
+        //    var maxFileSize = 10 * 1024 * 1024; // 5MB
+        //    if (file.Length > maxFileSize)
+        //    {
+        //        response = new CommonResponse<Dictionary<string, object>>
+        //        {
+        //            StatusCode = CommonFunction.FAIL,
+        //            Message = "Giới hạn dung lượng file là 10MB (10MB limit).",
+        //            Data = null,
+        //            size = 0
+        //        };
+        //        return response;
+        //    }
+
+        //    string uniqueFileName = file.FileName;
+
+        //    //Upload in db
+        //    string base64String;
+        //    using (var stream = new MemoryStream())
+        //    {
+        //        await file.CopyToAsync(stream);
+        //        //var fileBytes = stream.ToArray();
+        //        //base64String = Convert.ToBase64String(fileBytes);
+        //        var image = Image.FromStream(stream);
+        //        var compressedStream = new MemoryStream();
+        //        var encoderParameters = new EncoderParameters(1);
+        //        encoderParameters.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, 40L); // Chất lượng nén (0-100)
+        //        var codec = ImageCodecInfo.GetImageDecoders().First(c => c.FormatID == ImageFormat.Jpeg.Guid);
+        //        image.Save(compressedStream, codec, encoderParameters);
+
+        //        var fileBytes = compressedStream.ToArray();
+        //        base64String = Convert.ToBase64String(fileBytes);
+        //    }
+
+        //    Dictionary<string, object> result = new Dictionary<string, object>();
+        //    result.Add("fileUrl", base64String);
+        //    result.Add("fileName", uniqueFileName);
+        //    List<Dictionary<string, object>> fileUrl = new List<Dictionary<string, object>>();
+        //    fileUrl.Add(result);
+
+        //    response = new CommonResponse<Dictionary<string, object>>
+        //    {
+        //        StatusCode = CommonFunction.SUCCESS,
+        //        Message = "Upload file succsessfully.",
+        //        Data = fileUrl,
+        //        size = 0
+        //    };
+        //    return response;
+        //}
         public async static Task<CommonResponse<Dictionary<string, object>>> UploadFile(IFormFile file)
         {
             var response = new CommonResponse<Dictionary<string, object>>
             {
                 StatusCode = CommonFunction.SUCCESS,
-                Message = "Upload file succsessfully.",
+                Message = "Upload file successfully.",
                 Data = null,
                 size = 0
             };
@@ -116,42 +190,33 @@ namespace HungThinh.Common
                 return response;
             }
 
-            // Kiểm tra kích thước tệp (giới hạn 5MB)
-            var maxFileSize = 10 * 1024 * 1024; // 5MB
+            // Kiểm tra kích thước tệp (giới hạn 10MB)
+            var maxFileSize = 10 * 1024 * 1024; // 10MB
             if (file.Length > maxFileSize)
             {
                 response = new CommonResponse<Dictionary<string, object>>
                 {
                     StatusCode = CommonFunction.FAIL,
-                    Message = "Giới hạn dung lượng file là 10MB (10MB limit).",
+                    Message = "Giới hạn dung lượng file là 10MB.",
                     Data = null,
                     size = 0
                 };
                 return response;
             }
 
-            string uniqueFileName = file.FileName;
+            // Tạo tên file duy nhất
+            string uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
+            string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/upload", uniqueFileName);
 
-            //Upload in db
-            string base64String;
-            using (var stream = new MemoryStream())
+            // Lưu file vào folder
+            using (var stream = new FileStream(filePath, FileMode.Create))
             {
                 await file.CopyToAsync(stream);
-                //var fileBytes = stream.ToArray();
-                //base64String = Convert.ToBase64String(fileBytes);
-                var image = Image.FromStream(stream);
-                var compressedStream = new MemoryStream();
-                var encoderParameters = new EncoderParameters(1);
-                encoderParameters.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, 40L); // Chất lượng nén (0-100)
-                var codec = ImageCodecInfo.GetImageDecoders().First(c => c.FormatID == ImageFormat.Jpeg.Guid);
-                image.Save(compressedStream, codec, encoderParameters);
-
-                var fileBytes = compressedStream.ToArray();
-                base64String = Convert.ToBase64String(fileBytes);
             }
 
+            // Trả về đường dẫn file
             Dictionary<string, object> result = new Dictionary<string, object>();
-            result.Add("fileUrl", base64String);
+            result.Add("fileUrl", "/upload/" + uniqueFileName);
             result.Add("fileName", uniqueFileName);
             List<Dictionary<string, object>> fileUrl = new List<Dictionary<string, object>>();
             fileUrl.Add(result);
@@ -159,11 +224,29 @@ namespace HungThinh.Common
             response = new CommonResponse<Dictionary<string, object>>
             {
                 StatusCode = CommonFunction.SUCCESS,
-                Message = "Upload file succsessfully.",
+                Message = "Upload file successfully.",
                 Data = fileUrl,
                 size = 0
             };
+
             return response;
+        }
+        public static void DeleteFile(string fileUrl)
+        {
+            // Lấy đường dẫn tuyệt đối của file
+            string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", fileUrl.TrimStart('/'));
+
+            // Kiểm tra xem file có tồn tại không
+            if (File.Exists(filePath))
+            {
+                // Xóa file
+                File.Delete(filePath);
+            }
+            else
+            {
+                // Xử lý khi file không tồn tại (nếu cần)
+                
+            }
         }
         public async static Task<CommonResponse<Dictionary<string, object>>> UploadFilePDF(IFormFile file)
         {
@@ -190,32 +273,19 @@ namespace HungThinh.Common
                 return response;
             }
 
-            // Kiểm tra kích thước tệp (giới hạn 5MB)
-            //var maxFileSize = 10 * 1024 * 1024; // 5MB
-            //if (file.Length > maxFileSize)
-            //{
-            //    response = new CommonResponse<Dictionary<string, object>>
-            //    {
-            //        StatusCode = CommonFunction.FAIL,
-            //        Message = "Giới hạn dung lượng file là 10MB (10MB limit).",
-            //        Data = null,
-            //        size = 0
-            //    };
-            //    return response;
-            //}
+            // Tạo tên file duy nhất
+            string uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
+            string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/upload", uniqueFileName);
 
-            string uniqueFileName = file.FileName;
-            //Upload in db
-            string base64String;
-            using (var stream = new MemoryStream())
+            // Lưu file vào folder
+            using (var stream = new FileStream(filePath, FileMode.Create))
             {
                 await file.CopyToAsync(stream);
-                var fileBytes = stream.ToArray();
-                base64String = Convert.ToBase64String(fileBytes);
             }
 
+            // Trả về đường dẫn file
             Dictionary<string, object> result = new Dictionary<string, object>();
-            result.Add("fileUrl", base64String);
+            result.Add("fileUrl", "/upload/" + uniqueFileName);
             result.Add("fileName", uniqueFileName);
             List<Dictionary<string, object>> fileUrl = new List<Dictionary<string, object>>();
             fileUrl.Add(result);

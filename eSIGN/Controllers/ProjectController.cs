@@ -122,6 +122,23 @@ namespace HungThinh.Controllers
             string userid = User.FindFirstValue(ClaimTypes.Name);
             try
             {
+                using var connection2 = new SqlConnection(_connection.DefaultConnection);
+                using var command2 = new SqlCommand("HT_GetProjectChiTiet", connection2) { CommandType = CommandType.StoredProcedure };
+
+                // Thêm các tham số cho stored procedure (nếu cần)
+                command2.Parameters.AddWithValue("@id", id);
+                connection2.Open();
+                var reader2 = command2.ExecuteReader();
+                List<Dictionary<string, object>> data2 = CommonFunction.GetDataFromProcedure(reader2);
+                connection2.Close();
+                if(data2.Count > 0)
+                {
+                    if (!DBNull.Value.Equals(data2[0]["file_url"]))
+                    {
+                        CommonFunction.DeleteFile(data2[0]["file_url"].ToString());
+                    }
+                }
+
                 using var connection = new SqlConnection(_connection.DefaultConnection);
                 using var command = new SqlCommand("HT_UpdateProject", connection) { CommandType = CommandType.StoredProcedure };
 

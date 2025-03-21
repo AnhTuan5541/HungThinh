@@ -140,7 +140,7 @@
                 tableBody += `<tr>
                                     <td>${row.title}</td>
                                     <td>${row.detail}</td>
-                                    <td><img src="data:image/${extensionFile};base64, ${row.file_url}" alt="${row.file_name}" width="300" height="200"></td>
+                                    <td><img src="${row.file_url}" alt="${row.file_name}" width="300" height="200"></td>
                                     <td>${convertDate(row.update_at)}</td>
                                     <td>
                                         <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#modal-${row.id}">Update</button>

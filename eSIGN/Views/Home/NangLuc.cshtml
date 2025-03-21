@@ -148,7 +148,7 @@
                     let urlList = data[0].file_name.split('.')
                     let extensionFile = urlList[urlList.length - 1]
                     let file_url = data[0].file_url
-                    $(`#imgTaiSaoNenChon`).html(`<img src="data:image/${extensionFile};base64, ${file_url}" alt="">`)
+                    $(`#imgTaiSaoNenChon`).html(`<img src="${file_url}" alt="">`)
                     $(`#detailTaiSaoNenChon`).html(data[0].detail)
                 },
                 error: function (err) {
@@ -200,7 +200,7 @@
 
                     let base64 = 'data:text/plain;base64,' + data[0].file_url;
 
-                    $(`#downloadHoSoNangLuc`).html(`<a href="${base64}" download="${data[0].file_name}" style="color: #fff">Tải hồ sơ năng lực</a>`)
+                    $(`#downloadHoSoNangLuc`).html(`<a href="${data[0].file_url}" download="${data[0].file_name}" style="color: #fff">Tải hồ sơ năng lực</a>`)
                 },
                 error: function (err) {
                     alert('An error occurred. ' + err.responseText);
